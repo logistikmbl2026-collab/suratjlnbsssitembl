@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Jalan Logistik & Comex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        
+        .a4-container {
+            width: 210mm;
+            min-height: 293mm; 
+            background: white;
+            padding: 10mm;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            color: #000;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Desain Tabel Header Persis Excel Standar BSS */
+        .pdf-header-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px; }
+        .pdf-header-table td { border: 2px solid #000; padding: 4px; vertical-align: middle; }
+        .pdf-header-table .doc-ctrl { font-size: 9px; width: 32%; padding: 0; }
+        .pdf-header-table .doc-ctrl table { width: 100%; border-collapse: collapse; }
+        .pdf-header-table .doc-ctrl td { border: 1px solid #000; padding: 2px 4px; }
+
+        .info-text { font-size: 11px; margin-bottom: 8px; line-height: 1.4; }
+        
+        /* Tabel Material Utama */
+        .pdf-table { width: 100%; border-collapse: collapse; table-layout: fixed; word-wrap: break-word; margin-top: 5px; }
+        .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 5px 4px; vertical-align: top; font-size: 10px; }
+        .pdf-table th { text-align: center; font-weight: bold; background-color: #f9fafb; }
+        
+        .col-num { width: 5%; text-align: center; }
+        .col-desc { width: 28%; text-align: left; }
+        .col-std { width: 9%; text-align: center; }
+        
+        /* Lebar Kolom Dinamis Comex (Tanpa Type Unit) */
+        .pdf-table.comex-mode .col-desc { width: 22%; }
+        .pdf-table.comex-mode .col-std { width: 8%; }
+        .col-comex { width: 10%; text-align: center; display: none; }
+        .comex-mode .col-comex { display: table-cell; }
+
+        /* Kotak Lampiran Foto Di Bawah Tabel Material & Di Atas Tanda Tangan */
+        .lampiran-box { border: 2px solid #000; border-top: none; padding: 8px; text-align: center; page-break-inside: avoid; }
+        .lampiran-title { font-weight: bold; font-size: 11px; margin-bottom: 6px; text-decoration: underline; }
+        .lampiran-img { width: 23%; height: 150px; object-fit: contain; margin: 3px; border: 1px solid #ccc; display: inline-block; background: #fff; }
+
+        /* Tabel Tanda Tangan Tingkat Lanjut (Sejajar Sempurna) */
+        .signature-table { width: 100%; border-collapse: collapse; margin-top: 15px; page-break-inside: avoid; text-align: center; font-size: 10px; }
+        .signature-table td { width: 20%; border: 1px solid #000; padding: 4px; vertical-align: top; }
+        .sig-title-row td { font-weight: normal; padding-top: 5px; }
+        .sig-space-row td { height: 75px; border-bottom: none; } /* Ruang Kosong Stempel */
+        .sig-name-row td { border-top: none; padding-bottom: 2px; }
+        .sig-phone-row td { border-top: none; padding-top: 0; padding-bottom: 5px; }
+        
+        .signature-line { border-top: 1px solid #000; width: 90%; margin: 0 auto 4px auto; }
+        .sig-input { width: 95%; border: none; text-align: center; font-size: 10px; font-weight: bold; font-family: Arial, sans-serif; outline: none; background: transparent; }
+        .sig-input-phone { width: 95%; border: none; text-align: center; font-size: 9px; color: #555; font-family: Arial, sans-serif; outline: none; background: transparent; }
+
+        .footer-text { font-size: 8px; margin-top: 10px; text-align: left; line-height: 1.2; }
+
+        /* Custom Notifikasi Alert */
+        .alert-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .alert-box { background: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .alert-box h3 { margin-top: 0; font-size: 18px; font-weight: bold; }
+        .alert-box button { margin-top: 15px; background: #3b82f6; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
+
+        /* Aturan Khusus Printer Fisik untuk Mencegah Halaman Kosong */
+        @media print {
+            body, html { background: white; margin: 0; padding: 0; height: auto; }
+            .no-print { display: none !important; }
+            .a4-container { 
+                box-shadow: none; margin: 0; padding: 5mm; width: 100%; 
+                min-height: auto !important; page-break-after: avoid; 
+            }
+            @page { size: A4 portrait; margin: 0mm; }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+<div class="w-full bg-blue-600 text-white shadow-md p-4 flex flex-wrap justify-between items-center no-print">
+    <div>
+        <h1 class="text-2xl font-bold">Surat Jalan Logistik & Comex</h1>
+        <p id="topDateDisplay" class="text-blue-200 text-sm mt-1"></p>
+    </div>
+    <div class="flex space-x-2 mt-2 sm:mt-0">
+        <button onclick="switchTab('input')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">📝 Input Data</button>
+        <button onclick="switchTab('preview')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">📄 Preview & Cetak</button>
+        <button onclick="switchTab('validasi')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">📂 Upload Validasi</button>
+    </div>
+</div>
+
+<!-- Kotak Notifikasi Kustom -->
+<div id="customAlert" class="alert-overlay">
+    <div class="alert-box">
+        <h3 id="alertTitle">Notifikasi</h3>
+        <p id="alertMessage"></p>
+        <button onclick="closeAlert()">Tutup</button>
+    </div>
+</div>
+
+<!-- ======================= TAB 1: INPUT DATA ======================= -->
+<div id="tab-input" class="p-6 w-full mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6 border-t-4 border-blue-500">
+        <h2 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Pilih Opsi Document</h2>
+        <select id="docMode" onchange="toggleComexMode()" class="w-full md:w-1/2 p-2 border rounded bg-gray-50 focus:ring-blue-500 font-semibold text-blue-700">
+            <option value="logistik">OPSI 1 : SURAT JALAN KELUAR (Logistik)</option>
+            <option value="comex">OPSI 2 : SURAT JALAN COMEX</option>
+        </select>
+    </div>
+
+    <!-- Info Dokumen Full Screen -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Informasi Dokumen</h2>
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div>
+                <label class="block text-sm font-semibold mb-1">Tanggal</label>
+                <input type="date" id="inTanggal" onchange="syncNoSurat()" class="w-full p-2 border rounded focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">Nomor Surat Jalan</label>
+                <input type="text" id="inNoSurat" readonly class="w-full p-2 border rounded bg-gray-200 text-gray-700 font-bold cursor-not-allowed" title="Nomor dibuat otomatis berdasarkan urutan sistem">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">No. STO / PO</label>
+                <input type="text" id="inNoSTO" class="w-full p-2 border rounded focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">No. GI</label>
+                <input type="text" id="inNoGI" class="w-full p-2 border rounded focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">Dikirim Dari</label>
+                <input type="text" id="inDari" value="BSS" class="w-full p-2 border rounded focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">Dikirim Ke</label>
+                <input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500">
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Data Penandatangan -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6 border-l-4 border-indigo-500">
+        <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Informasi Penandatangan (Signers)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div>
+                <label class="block text-sm font-semibold mb-1">Dibuat oleh</label>
+                <input type="text" id="inTtd1" value="User Pengirim" class="w-full p-2 border rounded focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">Diketahui oleh</label>
+                <input type="text" id="inTtd2" value="Atasan Langsung" class="w-full p-2 border rounded focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">Diperiksa oleh</label>
+                <input type="text" id="inTtd3" value="Security" class="w-full p-2 border rounded focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">Dibawa oleh</label>
+                <input type="text" id="inTtd4" value="Delivery" class="w-full p-2 border rounded focus:ring-blue-500 mb-2" placeholder="Nama Driver">
+                <input type="text" id="inTtd4Phone" value="0812..." class="w-full p-2 border rounded focus:ring-blue-500 text-sm bg-gray-50" placeholder="No. Telp">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">Diterima oleh</label>
+                <input type="text" id="inTtd5" value="User Penerima" class="w-full p-2 border rounded focus:ring-blue-500">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6 overflow-x-auto">
+        <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Daftar Material</h2>
+        <table class="w-full text-sm text-left border">
+            <thead class="bg-gray-100 border-b">
+                <tr>
+                    <th class="p-2 border">Material</th>
+                    <th class="p-2 border">Material Description</th>
+                    <th class="p-2 border col-input-comex hidden bg-yellow-100">SN Module</th>
+                    <th class="p-2 border col-input-comex hidden bg-yellow-100">Eks Unit</th>
+                    <th class="p-2 border">Mfr Part Number</th>
+                    <th class="p-2 border w-20">Qty</th>
+                    <th class="p-2 border w-24">Uom</th>
+                    <th class="p-2 border">Batch</th>
+                    <th class="p-2 border">Remarks</th>
+                    <th class="p-2 border text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="inputTbody"></tbody>
+        </table>
+        <div class="flex flex-wrap gap-3 mt-4">
+            <button onclick="addRow()" class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 font-semibold">+ Tambah Baris Material</button>
+            <button onclick="clearAllRows()" class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 font-semibold">🗑️ Clear Semua Baris</button>
+        </div>
+    </div>
+
+    <!-- Upload Foto Barang -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Upload Dokumentasi / Foto Barang</h2>
+        <div class="flex flex-wrap gap-4 mb-4">
+            <label class="cursor-pointer bg-blue-100 text-blue-700 px-4 py-2 rounded border border-blue-300 hover:bg-blue-200 transition">
+                📸 Ambil Foto (Kamera)
+                <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleDocsCapture(event)">
+            </label>
+            <label class="cursor-pointer bg-gray-100 text-gray-700 px-4 py-2 rounded border hover:bg-gray-200 transition">
+                📁 Pilih File (Galeri)
+                <input type="file" accept="image/*" class="hidden" onchange="handleDocsUpload(event)">
+            </label>
+            <button onclick="clearDocsPhotos()" class="bg-red-100 text-red-600 px-4 py-2 rounded border border-red-300 hover:bg-red-200">🗑️ Hapus Semua</button>
+        </div>
+        <div id="docsPreviewContainer" class="flex flex-wrap gap-2 mt-4 p-4 border-2 border-dashed border-gray-300 rounded min-h-[150px] bg-gray-50 items-center justify-center">
+            <p class="text-gray-400 text-sm italic" id="docsEmptyText">Belum ada foto yang ditambahkan.</p>
+        </div>
+    </div>
+
+    <button onclick="saveToDriveAndSheet()" id="btnSaveData" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded shadow-lg hover:bg-blue-700">
+        💾 SIMPAN DATA KE DATABASE (SHEETS)
+    </button>
+</div>
+
+<!-- ======================= TAB 2: PREVIEW & CETAK ======================= -->
+<div id="tab-preview" class="p-6 hidden bg-gray-800">
+    <div class="mb-4 flex gap-4 no-print justify-center">
+        <button onclick="printDoc()" class="bg-green-600 text-white px-6 py-2 rounded shadow hover:bg-green-700 font-bold">🖨️ Cetak Printer</button>
+        <button onclick="downloadPDF()" class="bg-red-600 text-white px-6 py-2 rounded shadow hover:bg-red-700 font-bold">📄 Download PDF</button>
+    </div>
+
+    <div class="a4-container" id="pdfArea">
+        <table class="pdf-header-table">
+            <tr>
+                <td rowspan="2" style="width: 18%; text-align: center; vertical-align: middle;">
+                    <!-- Logo Baru PT BSS -->
+                    <img src="https://i.postimg.cc/mDzgfsdH/PT-BINA-SARANA-SUKSES.jpg" crossorigin="anonymous" style="width: 100%; max-height: 55px; object-fit: contain; margin: 0 auto;">
+                </td>
+                <td rowspan="2" style="width: 50%; padding-left:10px;">
+                    <div style="font-weight: bold; font-size: 13px;">PT BINA SARANA SUKSES</div>
+                    <div style="font-size: 9px; margin-top:1px;">JASA PERTAMBANGAN</div>
+                    <div style="font-size: 9px;">INTEGRATED BSS EXCELLENT SYSTEM</div>
+                </td>
+                <td class="doc-ctrl">
+                    <table>
+                        <tr><td style="width:38%; font-weight:bold; border-top:none; border-left:none;">FORM</td><td style="border-top:none; border-right:none;"></td></tr>
+                        <tr><td style="border-left:none;">No. Dok</td><td style="border-right:none;">: BSS-FRM-LOG-023</td></tr>
+                        <tr><td style="border-left:none;">Revisi</td><td style="border-right:none;">: 01</td></tr>
+                        <tr><td style="border-left:none;">Tanggal</td><td style="border-right:none;">: 11 Januari 2024</td></tr>
+                        <tr><td style="border-bottom:none; border-left:none;">Halaman</td><td style="border-bottom:none; border-right:none;">: 1 dari 1</td></tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <div style="text-align: center; font-size: 14px; font-weight: bold; margin: 10px 0; text-decoration: underline;" id="docTitleLabel">SURAT JALAN KELUAR</div>
+
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div class="info-text">
+                <table>
+                    <tr><td style="width:65px;">Tanggal</td><td>: <span id="outTanggal"></span></td></tr>
+                    <tr><td>No. Surat</td><td>: <span id="outNoSurat" style="font-weight:bold; font-size: 12px;"></span></td></tr>
+                    <tr><td>Dari</td><td>: <span id="outDari"></span></td></tr>
+                    <tr><td>Ke</td><td>: <span id="outKe"></span></td></tr>
+                </table>
+            </div>
+            <div style="text-align:right;">
+                <svg id="barcode"></svg>
+                <div style="font-size:9px; margin-top:2px;">No STO/PO: <span id="outSTO"></span> | No GI: <span id="outGI"></span></div>
+            </div>
+        </div>
+
+        <table class="pdf-table" id="previewTable">
+            <thead>
+                <tr>
+                    <th class="col-num">No</th>
+                    <th class="col-std">Material</th>
+                    <th class="col-desc">Material description</th>
+                    <th class="col-comex">SN Module</th>
+                    <th class="col-comex">Eks Unit</th>
+                    <th class="col-std">Mfr Part Number</th>
+                    <th class="col-std" style="width: 5%;">Qty</th>
+                    <th class="col-std" style="width: 5%;">Uom</th>
+                    <th class="col-std" style="width: 8%;">Batch</th>
+                    <th class="col-std">Remarks</th>
+                </tr>
+            </thead>
+            <tbody id="outTbody"></tbody>
+        </table>
+
+        <!-- Lampiran Foto -->
+        <div id="previewLampiran" class="lampiran-box hidden">
+            <div class="lampiran-title">LAMPIRAN DOKUMENTASI PENGIRIMAN</div>
+            <div id="lampiranImages" style="text-align:center;"></div>
+        </div>
+
+        <!-- Tabel Tanda Tangan Sejajar -->
+        <table class="signature-table">
+            <tr class="sig-title-row">
+                <td>Dibuat oleh,</td>
+                <td>Diketahui oleh,</td>
+                <td>Diperiksa oleh,</td>
+                <td>Dibawa oleh,</td>
+                <td>Diterima oleh,</td>
+            </tr>
+            <tr class="sig-space-row">
+                <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr class="sig-name-row">
+                <td>
+                    <div class="signature-line"></div>
+                    <input type="text" id="outTtd1" class="sig-input" readonly>
+                </td>
+                <td>
+                    <div class="signature-line"></div>
+                    <input type="text" id="outTtd2" class="sig-input" readonly>
+                </td>
+                <td>
+                    <div class="signature-line"></div>
+                    <input type="text" id="outTtd3" class="sig-input" readonly>
+                </td>
+                <td>
+                    <div class="signature-line"></div>
+                    <input type="text" id="outTtd4" class="sig-input" readonly>
+                </td>
+                <td>
+                    <div class="signature-line"></div>
+                    <input type="text" id="outTtd5" class="sig-input" readonly>
+                </td>
+            </tr>
+            <tr class="sig-phone-row">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <input type="text" id="outTtd4Phone" class="sig-input-phone" readonly>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+
+        <div class="footer-text">
+            Head Office : Landmark Pluit, Jalan Pluit Selatan Raya, Komplek Perkantoran, Landmark Pluit D, No. 17, Pluit, Penjaringan, Jakarta Utara - DKI Jakarta<br>
+            Telepon : 021 - 22677447
+        </div>
+    </div>
+</div>
+
+<!-- ======================= TAB 3: UPLOAD VALIDASI ======================= -->
+<div id="tab-validasi" class="p-6 hidden w-full max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-8 border-t-4 border-green-500">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Upload Dokumen Validasi</h2>
+        <p class="text-gray-600 mb-6 border-b pb-4">Unggah foto/scan Surat Jalan yang telah ditandatangani lengkap.</p>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-semibold mb-1">Nomor Surat Jalan</label>
+            <input type="text" id="valNoSurat" readonly class="w-full p-3 border rounded bg-gray-100 font-bold text-blue-800">
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-semibold mb-2">Pilih Metode Upload</label>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <label class="flex-1 cursor-pointer bg-blue-100 text-blue-800 text-center px-4 py-4 rounded-lg border-2 border-blue-300 hover:bg-blue-200 transition font-semibold shadow-sm">
+                    📸 Ambil Foto (Kamera)
+                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleValFileSelect(event)">
+                </label>
+                <label class="flex-1 cursor-pointer bg-gray-100 text-gray-800 text-center px-4 py-4 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition font-semibold shadow-sm">
+                    📁 Pilih File (PDF/Galeri)
+                    <input type="file" accept="application/pdf,image/*" class="hidden" onchange="handleValFileSelect(event)">
+                </label>
+            </div>
+            <div class="mt-2 text-sm font-medium text-gray-700">
+                File Terpilih: <span id="valSelectedFileName" class="text-blue-600 italic">Belum ada file</span>
+            </div>
+        </div>
+
+        <button onclick="uploadValidasiToDrive()" id="btnUploadVal" class="w-full bg-green-600 text-white font-bold py-4 px-4 rounded-lg shadow-lg hover:bg-green-700 text-lg transition">
+            🚀 UPLOAD KE GOOGLE DRIVE
+        </button>
+        <input type="hidden" id="uploadedValidasiUrl" value="">
+        
+        <div class="mt-8 border-t pt-6">
+            <h3 class="font-bold text-gray-700 mb-2">Bagikan Informasi via WhatsApp</h3>
+            <button onclick="shareWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-[#128C7E] flex items-center justify-center gap-2 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Kirim ke WhatsApp
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyjgMsVXLhGEjYLTxVSyOZ8eTHFsL8VAoFecR_OOG-hz33iScBVd0vIT5CMbCjXl0c-/exec';
+    let docsPhotos = []; 
+    let validasiFileBase64 = "";
+    let validasiMimeType = "";
+    
+    window.onload = () => {
+        document.getElementById('inTanggal').valueAsDate = new Date();
+        setTopDate();
+        addRow();
+        syncNoSurat();
+    };
+
+    function setTopDate() {
+        const d = new Date();
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        document.getElementById('topDateDisplay').innerText = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    function showAlert(title, message) {
+        document.getElementById('alertTitle').innerText = title;
+        document.getElementById('alertMessage').innerText = message;
+        document.getElementById('customAlert').style.display = 'flex';
+    }
+    
+    function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
+
+    function switchTab(tabId) {
+        document.getElementById('tab-input').classList.add('hidden');
+        document.getElementById('tab-preview').classList.add('hidden');
+        document.getElementById('tab-validasi').classList.add('hidden');
+        document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+        if(tabId === 'preview') buildPreview();
+        if(tabId === 'validasi') syncNoSurat();
+    }
+
+    function toggleComexMode() {
+        const mode = document.getElementById('docMode').value;
+        const comexCols = document.querySelectorAll('.col-input-comex');
+        if (mode === 'comex') {
+            comexCols.forEach(el => el.classList.remove('hidden'));
+        } else {
+            comexCols.forEach(el => el.classList.add('hidden'));
+        }
+    }
+
+    function syncNoSurat() {
+        const dateVal = document.getElementById('inTanggal').value;
+        if(dateVal) {
+            const d = new Date(dateVal);
+            const pad = (n) => n.toString().padStart(2, '0');
+            const dateStr = `${pad(d.getDate())}${pad(d.getMonth()+1)}${d.getFullYear().toString().slice(-2)}`;
+            
+            let storedData = JSON.parse(localStorage.getItem('bss_surat_seq')) || { date: dateStr, seq: 1 };
+            
+            // Jika hari berbeda dengan data tersimpan, reset urutan ke 1
+            if (storedData.date !== dateStr) {
+                storedData.seq = 1;
+            }
+            
+            // Format BSS/LOG/DDMMYY/SEQ (Terkunci & Otomatis)
+            const noSurat = `BSS/LOG/${dateStr}/${storedData.seq.toString().padStart(3, '0')}`;
+            document.getElementById('inNoSurat').value = noSurat;
+            document.getElementById('valNoSurat').value = noSurat;
+        }
+    }
+
+    function addRow() {
+        const tbody = document.getElementById('inputTbody');
+        const mode = document.getElementById('docMode').value;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="material"></td>
+            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="desc"></td>
+            <td class="p-1 border col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded" name="sn"></td>
+            <td class="p-1 border col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded" name="eks"></td>
+            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="part"></td>
+            <td class="p-1 border"><input type="number" class="w-full p-1 border rounded" name="qty"></td>
+            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="uom"></td>
+            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="batch"></td>
+            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="remarks"></td>
+            <td class="p-1 border text-center"><button onclick="this.closest('tr').remove()" class="bg-red-500 text-white px-2 py-1 rounded">X</button></td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    function clearAllRows() {
+        document.getElementById('inputTbody').innerHTML = '';
+        addRow();
+    }
+
+    function handleDocsUpload(event) { processDocsFile(event.target.files[0]); }
+    function handleDocsCapture(event) { processDocsFile(event.target.files[0]); }
+    
+    function processDocsFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            docsPhotos.push(e.target.result);
+            renderDocsPreview();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function clearDocsPhotos() { docsPhotos = []; renderDocsPreview(); }
+
+    function renderDocsPreview() {
+        const container = document.getElementById('docsPreviewContainer');
+        if (docsPhotos.length === 0) {
+            container.innerHTML = `<p class="text-gray-400 text-sm italic" id="docsEmptyText">Belum ada foto yang ditambahkan.</p>`;
+            return;
+        }
+        container.innerHTML = '';
+        docsPhotos.forEach(src => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = "h-32 object-contain border rounded shadow-sm";
+            container.appendChild(img);
+        });
+    }
+
+    function formatDate(dateString) {
+        if(!dateString) return "";
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const d = new Date(dateString);
+        return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    function buildPreview() {
+        document.getElementById('outTanggal').innerText = formatDate(document.getElementById('inTanggal').value);
+        document.getElementById('outNoSurat').innerText = document.getElementById('inNoSurat').value;
+        document.getElementById('outDari').innerText = document.getElementById('inDari').value;
+        document.getElementById('outKe').innerText = document.getElementById('inKe').value;
+        document.getElementById('outSTO').innerText = document.getElementById('inNoSTO').value;
+        document.getElementById('outGI').innerText = document.getElementById('inNoGI').value;
+
+        // Sync signers
+        document.getElementById('outTtd1').value = document.getElementById('inTtd1').value;
+        document.getElementById('outTtd2').value = document.getElementById('inTtd2').value;
+        document.getElementById('outTtd3').value = document.getElementById('inTtd3').value;
+        document.getElementById('outTtd4').value = document.getElementById('inTtd4').value;
+        document.getElementById('outTtd4Phone').value = document.getElementById('inTtd4Phone').value;
+        document.getElementById('outTtd5').value = document.getElementById('inTtd5').value;
+
+        const noSurat = document.getElementById('inNoSurat').value || 'BSS';
+        try { JsBarcode("#barcode", noSurat, { height: 25, displayValue: true, fontSize: 10, margin: 0 }); } catch(e) {}
+
+        const mode = document.getElementById('docMode').value;
+        const table = document.getElementById('previewTable');
+        if (mode === 'comex') {
+            table.classList.add('comex-mode');
+            document.getElementById('docTitleLabel').innerText = "SURAT JALAN COMEX";
+        } else {
+            table.classList.remove('comex-mode');
+            document.getElementById('docTitleLabel').innerText = "SURAT JALAN KELUAR";
+        }
+
+        const outTbody = document.getElementById('outTbody');
+        outTbody.innerHTML = '';
+        document.querySelectorAll('#inputTbody tr').forEach((row, index) => {
+            const i = row.querySelectorAll('input');
+            outTbody.innerHTML += `<tr>
+                <td class="col-num">${index + 1}</td><td class="col-std">${i[0].value}</td><td class="col-desc">${i[1].value}</td>
+                <td class="col-comex">${i[2].value}</td><td class="col-comex">${i[3].value}</td><td class="col-std">${i[4].value}</td>
+                <td class="col-std">${i[5].value}</td><td class="col-std">${i[6].value}</td><td class="col-std">${i[7].value}</td><td class="col-std">${i[8].value}</td>
+            </tr>`;
+        });
+
+        const lampiranBox = document.getElementById('previewLampiran');
+        const lampiranImgContainer = document.getElementById('lampiranImages');
+        lampiranImgContainer.innerHTML = '';
+        
+        if(docsPhotos.length > 0) {
+            lampiranBox.classList.remove('hidden');
+            docsPhotos.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src; img.className = "lampiran-img";
+                lampiranImgContainer.appendChild(img);
+            });
+        } else {
+            lampiranBox.classList.add('hidden');
+        }
+    }
+
+    function printDoc() { window.print(); }
+
+    function downloadPDF() {
+        const element = document.getElementById('pdfArea');
+        element.style.boxShadow = 'none';
+
+        const inputs = element.querySelectorAll('input');
+        const backupValues = [];
+
+        // Konversi sementara input jadi teks murni agar PDF sejajar
+        inputs.forEach(input => {
+            backupValues.push({ el: input, val: input.value, parent: input.parentNode });
+            const span = document.createElement('div');
+            span.innerText = input.value || '';
+            span.style.cssText = input.style.cssText + "; font-size:" + window.getComputedStyle(input).fontSize + "; font-weight:bold; text-align:center; min-height:14px; margin-top:2px;";
+            input.replaceWith(span);
+        });
+
+        html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+            // Kembalikan elemen input setelah dirender canvas
+            backupValues.forEach(item => {
+                const tempDiv = item.parent.querySelector('div');
+                if(tempDiv) { tempDiv.replaceWith(item.el); }
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+            
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 5) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
+            pdf.save(`Surat_Jalan_${document.getElementById('inNoSurat').value.replace(/\//g, '-') || 'BSS'}.pdf`);
+            element.style.boxShadow = '';
+        }).catch(err => {
+            backupValues.forEach(item => {
+                const tempDiv = item.parent.querySelector('div');
+                if(tempDiv) { tempDiv.replaceWith(item.el); }
+            });
+            element.style.boxShadow = '';
+            showAlert("Error PDF", "Gagal mengonversi ke PDF: " + err);
+        });
+    }
+
+    function saveToDriveAndSheet() {
+        const btn = document.getElementById('btnSaveData');
+        btn.innerText = "⏳ Menyimpan data..."; btn.disabled = true;
+
+        let materialsData = [];
+        document.querySelectorAll('#inputTbody tr').forEach(row => {
+            const i = row.querySelectorAll('input');
+            materialsData.push(`${i[0].value} | ${i[1].value} | Qty:${i[5].value}`);
+        });
+
+        fetch(scriptURL, {
+            method: 'POST', mode: 'no-cors', cache: 'no-cache', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'save_data', tanggal: document.getElementById('inTanggal').value, noSurat: document.getElementById('inNoSurat').value,
+                noSTO: document.getElementById('inNoSTO').value, noGI: document.getElementById('inNoGI').value, dari: document.getElementById('inDari').value,
+                ke: document.getElementById('inKe').value, materials: materialsData.join("\n"),
+                ttd1: document.getElementById('inTtd1').value, ttd2: document.getElementById('inTtd2').value, 
+                ttd3: document.getElementById('inTtd3').value, ttd4: document.getElementById('inTtd4').value + ' (' + document.getElementById('inTtd4Phone').value + ')', ttd5: document.getElementById('inTtd5').value,
+                images: docsPhotos
+            })
+        }).then(() => {
+            // Auto Increment Nomor Surat Jalan
+            const dateVal = document.getElementById('inTanggal').value;
+            const d = new Date(dateVal);
+            const pad = (n) => n.toString().padStart(2, '0');
+            const dateStr = `${pad(d.getDate())}${pad(d.getMonth()+1)}${d.getFullYear().toString().slice(-2)}`;
+            
+            let storedData = JSON.parse(localStorage.getItem('bss_surat_seq')) || { date: dateStr, seq: 1 };
+            
+            if (storedData.date === dateStr) { storedData.seq += 1; } 
+            else { storedData = { date: dateStr, seq: 1 }; }
+            
+            localStorage.setItem('bss_surat_seq', JSON.stringify(storedData));
+            syncNoSurat(); // Refresh visual kolom
+
+            showAlert("Sukses", "Data disimpan! Urutan nomor surat telah ditingkatkan."); 
+            btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
+        }).catch(err => {
+            showAlert("Error", "Gagal menyimpan: " + err); btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
+        });
+    }
+
+    function handleValFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        document.getElementById('valSelectedFileName').innerText = file.name;
+        validasiMimeType = file.type;
+        const reader = new FileReader();
+        reader.onload = function(e) { validasiFileBase64 = e.target.result.split(',')[1]; };
+        reader.readAsDataURL(file);
+    }
+
+    function uploadValidasiToDrive() {
+        if (!validasiFileBase64) return showAlert("Peringatan", "Pilih foto dokumen dulu!");
+        const btn = document.getElementById('btnUploadVal');
+        btn.innerText = "⏳ Sedang Mengupload..."; btn.disabled = true;
+
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'upload_validasi', noSurat: document.getElementById('valNoSurat').value, fileData: validasiFileBase64, mimeType: validasiMimeType })
+        }).then(res => res.json()).then(resData => {
+            if(resData.status === 'success') {
+                showAlert("Sukses", resData.message); document.getElementById('uploadedValidasiUrl').value = resData.fileUrl || "";
+            } else showAlert("Error", "Gagal upload: " + resData.message);
+            btn.innerText = "🚀 UPLOAD KE GOOGLE DRIVE"; btn.disabled = false;
+        }).catch(err => {
+            showAlert("Kesalahan", "Gagal menghubungi server.\n" + err); btn.innerText = "🚀 UPLOAD KE GOOGLE DRIVE"; btn.disabled = false;
+        });
+    }
+
+    function shareWhatsApp() {
+        const dari = document.getElementById('inDari').value || "-"; const ke = document.getElementById('inKe').value || "-";
+        const tgl = formatDate(document.getElementById('inTanggal').value) || "-"; const noSurat = document.getElementById('inNoSurat').value || "-";
+        const fileUrl = document.getElementById('uploadedValidasiUrl').value;
+
+        let text = `*Informasi Pengiriman Barang – Surat Jalan*\nNo Surat: ${noSurat}\nDikirim Dari: ${dari}\nDikirim Ke: ${ke}\nTanggal: ${tgl}\n\n`;
+        text += fileUrl ? `*Link Dokumen Validasi:*\n${fileUrl}\n` : `_(Dokumen validasi belum diunggah ke Drive)_\n`;
+        
+        // Coba fitur lampirkan File bawaan HP jika dibuka dari mobile
+        if (/Android|webOS|iPhone|iPad/i.test(navigator.userAgent) && validasiFileBase64) {
+            const b = atob(validasiFileBase64); const ab = new Uint8Array(b.length);
+            for (let i = 0; i < b.length; i++) ab[i] = b.charCodeAt(i);
+            const file = new File([new Blob([ab], {type: validasiMimeType})], "Validasi_" + noSurat.replace(/\//g, "-") + (validasiMimeType.includes('pdf')?'.pdf':'.jpg'), { type: validasiMimeType });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) return navigator.share({ title: 'Dokumen', text: text, files: [file] }).catch(e=>console.log(e));
+        }
+        
+        // Fallback untuk Web Desktop / PC (Kirim Link saja)
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+</script>
+</body>
+</html>
