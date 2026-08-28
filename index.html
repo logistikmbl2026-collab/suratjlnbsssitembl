@@ -26,7 +26,7 @@
             position: relative;
         }
 
-        /* Desain Tabel Header Persis Excel Standar BSS */
+        /* Desain Tabel Header PT BSS */
         .pdf-header-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px; }
         .pdf-header-table td { border: 2px solid #000; padding: 4px; vertical-align: middle; }
         .pdf-header-table .doc-ctrl { font-size: 9px; width: 32%; padding: 0; }
@@ -44,13 +44,13 @@
         .col-desc { width: 28%; text-align: left; }
         .col-std { width: 9%; text-align: center; }
         
-        /* Lebar Kolom Dinamis Comex (Tanpa Type Unit) */
+        /* Lebar Kolom Dinamis Comex */
         .pdf-table.comex-mode .col-desc { width: 22%; }
         .pdf-table.comex-mode .col-std { width: 8%; }
         .col-comex { width: 10%; text-align: center; display: none; }
         .comex-mode .col-comex { display: table-cell; }
 
-        /* Kotak Lampiran Foto Di Bawah Tabel Material & Di Atas Tanda Tangan */
+        /* Kotak Lampiran Foto */
         .lampiran-box { border: 2px solid #000; border-top: none; padding: 8px; text-align: center; page-break-inside: avoid; }
         .lampiran-title { font-weight: bold; font-size: 11px; margin-bottom: 6px; text-decoration: underline; }
         .lampiran-img { width: 23%; height: 150px; object-fit: contain; margin: 3px; border: 1px solid #ccc; display: inline-block; background: #fff; }
@@ -59,7 +59,7 @@
         .signature-table { width: 100%; border-collapse: collapse; margin-top: 15px; page-break-inside: avoid; text-align: center; font-size: 10px; }
         .signature-table td { width: 20%; border: 1px solid #000; padding: 4px; vertical-align: top; }
         .sig-title-row td { font-weight: normal; padding-top: 5px; }
-        .sig-space-row td { height: 75px; border-bottom: none; } /* Ruang Kosong Stempel */
+        .sig-space-row td { height: 75px; border-bottom: none; position: relative; } /* Ruang Kosong Stempel */
         .sig-name-row td { border-top: none; padding-bottom: 2px; }
         .sig-phone-row td { border-top: none; padding-top: 0; padding-bottom: 5px; }
         
@@ -75,14 +75,10 @@
         .alert-box h3 { margin-top: 0; font-size: 18px; font-weight: bold; }
         .alert-box button { margin-top: 15px; background: #3b82f6; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
 
-        /* Aturan Khusus Printer Fisik untuk Mencegah Halaman Kosong */
         @media print {
             body, html { background: white; margin: 0; padding: 0; height: auto; }
             .no-print { display: none !important; }
-            .a4-container { 
-                box-shadow: none; margin: 0; padding: 5mm; width: 100%; 
-                min-height: auto !important; page-break-after: avoid; 
-            }
+            .a4-container { box-shadow: none; margin: 0; padding: 5mm; width: 100%; min-height: auto !important; page-break-after: avoid; }
             @page { size: A4 portrait; margin: 0mm; }
         }
     </style>
@@ -101,7 +97,6 @@
     </div>
 </div>
 
-<!-- Kotak Notifikasi Kustom -->
 <div id="customAlert" class="alert-overlay">
     <div class="alert-box">
         <h3 id="alertTitle">Notifikasi</h3>
@@ -120,10 +115,10 @@
         </select>
     </div>
 
-    <!-- Info Dokumen Full Screen -->
+    <!-- Info Dokumen -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Informasi Dokumen</h2>
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label class="block text-sm font-semibold mb-1">Tanggal</label>
                 <input type="date" id="inTanggal" onchange="syncNoSurat()" class="w-full p-2 border rounded focus:ring-blue-500">
@@ -148,6 +143,15 @@
                 <label class="block text-sm font-semibold mb-1">Dikirim Ke</label>
                 <input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500">
             </div>
+            <!-- Form Khusus Comex -->
+            <div class="comex-field-header hidden">
+                <label class="block text-sm font-semibold mb-1 text-purple-700">No. WO (Comex)</label>
+                <input type="text" id="inNoWO" class="w-full p-2 border rounded focus:ring-purple-500 bg-purple-50">
+            </div>
+            <div class="comex-field-header hidden">
+                <label class="block text-sm font-semibold mb-1 text-purple-700">No. MO Reff (Comex)</label>
+                <input type="text" id="inNoMO" class="w-full p-2 border rounded focus:ring-purple-500 bg-purple-50">
+            </div>
         </div>
     </div>
 
@@ -158,6 +162,10 @@
             <div>
                 <label class="block text-sm font-semibold mb-1">Dibuat oleh</label>
                 <input type="text" id="inTtd1" value="User Pengirim" class="w-full p-2 border rounded focus:ring-blue-500">
+                <label class="inline-flex items-center mt-2 cursor-pointer">
+                    <input type="checkbox" id="inApproveStamp" class="form-checkbox h-4 w-4 text-red-600 rounded border-gray-300">
+                    <span class="ml-2 text-xs font-bold text-red-600">+ Cap APPROVED</span>
+                </label>
             </div>
             <div>
                 <label class="block text-sm font-semibold mb-1">Diketahui oleh</label>
@@ -186,9 +194,9 @@
                 <tr>
                     <th class="p-2 border">Material</th>
                     <th class="p-2 border">Material Description</th>
+                    <th class="p-2 border">Mfr Part Number</th>
                     <th class="p-2 border col-input-comex hidden bg-yellow-100">SN Module</th>
                     <th class="p-2 border col-input-comex hidden bg-yellow-100">Eks Unit</th>
-                    <th class="p-2 border">Mfr Part Number</th>
                     <th class="p-2 border w-20">Qty</th>
                     <th class="p-2 border w-24">Uom</th>
                     <th class="p-2 border">Batch</th>
@@ -201,6 +209,9 @@
         <div class="flex flex-wrap gap-3 mt-4">
             <button onclick="addRow()" class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 font-semibold">+ Tambah Baris Material</button>
             <button onclick="clearAllRows()" class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 font-semibold">🗑️ Clear Semua Baris</button>
+            <span class="text-sm text-gray-700 self-center ml-2 bg-yellow-100 px-3 py-1.5 rounded border border-yellow-400 shadow-sm">
+                💡 <b>Tip:</b> Klik salah satu kolom, lalu tekan <b>Paste (Ctrl+V)</b> untuk memasukkan data dari Excel.
+            </span>
         </div>
     </div>
 
@@ -214,7 +225,7 @@
             </label>
             <label class="cursor-pointer bg-gray-100 text-gray-700 px-4 py-2 rounded border hover:bg-gray-200 transition">
                 📁 Pilih File (Galeri)
-                <input type="file" accept="image/*" class="hidden" onchange="handleDocsUpload(event)">
+                <input type="file" accept="image/*" multiple class="hidden" onchange="handleDocsUpload(event)">
             </label>
             <button onclick="clearDocsPhotos()" class="bg-red-100 text-red-600 px-4 py-2 rounded border border-red-300 hover:bg-red-200">🗑️ Hapus Semua</button>
         </div>
@@ -239,7 +250,6 @@
         <table class="pdf-header-table">
             <tr>
                 <td rowspan="2" style="width: 18%; text-align: center; vertical-align: middle;">
-                    <!-- Logo Baru PT BSS -->
                     <img src="https://i.postimg.cc/mDzgfsdH/PT-BINA-SARANA-SUKSES.jpg" crossorigin="anonymous" style="width: 100%; max-height: 55px; object-fit: contain; margin: 0 auto;">
                 </td>
                 <td rowspan="2" style="width: 50%; padding-left:10px;">
@@ -273,6 +283,7 @@
             <div style="text-align:right;">
                 <svg id="barcode"></svg>
                 <div style="font-size:9px; margin-top:2px;">No STO/PO: <span id="outSTO"></span> | No GI: <span id="outGI"></span></div>
+                <div id="comexPreviewInfo" class="hidden" style="font-size:9px; margin-top:2px; font-weight:bold;">No WO: <span id="outWO"></span> | No MO Reff: <span id="outMO"></span></div>
             </div>
         </div>
 
@@ -282,9 +293,9 @@
                     <th class="col-num">No</th>
                     <th class="col-std">Material</th>
                     <th class="col-desc">Material description</th>
+                    <th class="col-std">Mfr Part Number</th>
                     <th class="col-comex">SN Module</th>
                     <th class="col-comex">Eks Unit</th>
-                    <th class="col-std">Mfr Part Number</th>
                     <th class="col-std" style="width: 5%;">Qty</th>
                     <th class="col-std" style="width: 5%;">Uom</th>
                     <th class="col-std" style="width: 8%;">Batch</th>
@@ -300,7 +311,7 @@
             <div id="lampiranImages" style="text-align:center;"></div>
         </div>
 
-        <!-- Tabel Tanda Tangan Sejajar -->
+        <!-- Tabel Tanda Tangan (Sejajar Sempurna) -->
         <table class="signature-table">
             <tr class="sig-title-row">
                 <td>Dibuat oleh,</td>
@@ -310,37 +321,21 @@
                 <td>Diterima oleh,</td>
             </tr>
             <tr class="sig-space-row">
-                <td></td><td></td><td></td><td></td><td></td>
+                <td>
+                    <div id="outApproveStamp" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%) rotate(-15deg); border: 2px solid red; color: red; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 14px; letter-spacing: 2px; opacity: 0.8; z-index: 10;">APPROVED</div>
+                </td>
+                <td></td><td></td><td></td><td></td>
             </tr>
             <tr class="sig-name-row">
-                <td>
-                    <div class="signature-line"></div>
-                    <input type="text" id="outTtd1" class="sig-input" readonly>
-                </td>
-                <td>
-                    <div class="signature-line"></div>
-                    <input type="text" id="outTtd2" class="sig-input" readonly>
-                </td>
-                <td>
-                    <div class="signature-line"></div>
-                    <input type="text" id="outTtd3" class="sig-input" readonly>
-                </td>
-                <td>
-                    <div class="signature-line"></div>
-                    <input type="text" id="outTtd4" class="sig-input" readonly>
-                </td>
-                <td>
-                    <div class="signature-line"></div>
-                    <input type="text" id="outTtd5" class="sig-input" readonly>
-                </td>
+                <td><div class="signature-line"></div><input type="text" id="outTtd1" class="sig-input" readonly></td>
+                <td><div class="signature-line"></div><input type="text" id="outTtd2" class="sig-input" readonly></td>
+                <td><div class="signature-line"></div><input type="text" id="outTtd3" class="sig-input" readonly></td>
+                <td><div class="signature-line"></div><input type="text" id="outTtd4" class="sig-input" readonly></td>
+                <td><div class="signature-line"></div><input type="text" id="outTtd5" class="sig-input" readonly></td>
             </tr>
             <tr class="sig-phone-row">
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                    <input type="text" id="outTtd4Phone" class="sig-input-phone" readonly>
-                </td>
+                <td></td><td></td><td></td>
+                <td><input type="text" id="outTtd4Phone" class="sig-input-phone" readonly></td>
                 <td></td>
             </tr>
         </table>
@@ -401,8 +396,14 @@
     let validasiFileBase64 = "";
     let validasiMimeType = "";
     
+    // Fungsi Pengaman Pengambilan Nilai
+    const getVal = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) { el.value = val || ''; } };
+    const setText = (id, text) => { const el = document.getElementById(id); if (el) { el.innerText = text || ''; } };
+
     window.onload = () => {
-        document.getElementById('inTanggal').valueAsDate = new Date();
+        const tglInput = document.getElementById('inTanggal');
+        if (tglInput) tglInput.valueAsDate = new Date();
         setTopDate();
         addRow();
         syncNoSurat();
@@ -412,68 +413,73 @@
         const d = new Date();
         const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-        document.getElementById('topDateDisplay').innerText = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        setText('topDateDisplay', `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`);
     }
 
     function showAlert(title, message) {
-        document.getElementById('alertTitle').innerText = title;
-        document.getElementById('alertMessage').innerText = message;
-        document.getElementById('customAlert').style.display = 'flex';
+        setText('alertTitle', title);
+        setText('alertMessage', message);
+        const overlay = document.getElementById('customAlert');
+        if (overlay) overlay.style.display = 'flex';
     }
     
-    function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
+    function closeAlert() { 
+        const overlay = document.getElementById('customAlert');
+        if (overlay) overlay.style.display = 'none'; 
+    }
 
     function switchTab(tabId) {
-        document.getElementById('tab-input').classList.add('hidden');
-        document.getElementById('tab-preview').classList.add('hidden');
-        document.getElementById('tab-validasi').classList.add('hidden');
-        document.getElementById('tab-' + tabId).classList.remove('hidden');
+        ['input', 'preview', 'validasi'].forEach(id => {
+            const el = document.getElementById('tab-' + id);
+            if (el) el.classList.add('hidden');
+        });
+        
+        const targetEl = document.getElementById('tab-' + tabId);
+        if (targetEl) targetEl.classList.remove('hidden');
 
         if(tabId === 'preview') buildPreview();
         if(tabId === 'validasi') syncNoSurat();
     }
 
     function toggleComexMode() {
-        const mode = document.getElementById('docMode').value;
-        const comexCols = document.querySelectorAll('.col-input-comex');
-        if (mode === 'comex') {
-            comexCols.forEach(el => el.classList.remove('hidden'));
-        } else {
-            comexCols.forEach(el => el.classList.add('hidden'));
-        }
+        const mode = getVal('docMode');
+        document.querySelectorAll('.col-input-comex').forEach(el => {
+            if (mode === 'comex') el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        });
+        document.querySelectorAll('.comex-field-header').forEach(el => {
+            if (mode === 'comex') el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        });
     }
 
     function syncNoSurat() {
-        const dateVal = document.getElementById('inTanggal').value;
+        const dateVal = getVal('inTanggal');
         if(dateVal) {
             const d = new Date(dateVal);
             const pad = (n) => n.toString().padStart(2, '0');
             const dateStr = `${pad(d.getDate())}${pad(d.getMonth()+1)}${d.getFullYear().toString().slice(-2)}`;
             
             let storedData = JSON.parse(localStorage.getItem('bss_surat_seq')) || { date: dateStr, seq: 1 };
+            if (storedData.date !== dateStr) { storedData.seq = 1; }
             
-            // Jika hari berbeda dengan data tersimpan, reset urutan ke 1
-            if (storedData.date !== dateStr) {
-                storedData.seq = 1;
-            }
-            
-            // Format BSS/LOG/DDMMYY/SEQ (Terkunci & Otomatis)
             const noSurat = `BSS/LOG/${dateStr}/${storedData.seq.toString().padStart(3, '0')}`;
-            document.getElementById('inNoSurat').value = noSurat;
-            document.getElementById('valNoSurat').value = noSurat;
+            setVal('inNoSurat', noSurat);
+            setVal('valNoSurat', noSurat);
         }
     }
 
     function addRow() {
         const tbody = document.getElementById('inputTbody');
-        const mode = document.getElementById('docMode').value;
+        if(!tbody) return;
+        const mode = getVal('docMode');
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="material"></td>
             <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="desc"></td>
+            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="part"></td>
             <td class="p-1 border col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded" name="sn"></td>
             <td class="p-1 border col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded" name="eks"></td>
-            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="part"></td>
             <td class="p-1 border"><input type="number" class="w-full p-1 border rounded" name="qty"></td>
             <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="uom"></td>
             <td class="p-1 border"><input type="text" class="w-full p-1 border rounded" name="batch"></td>
@@ -484,11 +490,55 @@
     }
 
     function clearAllRows() {
-        document.getElementById('inputTbody').innerHTML = '';
-        addRow();
+        const tbody = document.getElementById('inputTbody');
+        if(tbody) { tbody.innerHTML = ''; addRow(); }
     }
 
-    function handleDocsUpload(event) { processDocsFile(event.target.files[0]); }
+    // Fitur Paste Excel
+    const tb = document.getElementById('inputTbody');
+    if(tb) {
+        tb.addEventListener('paste', function(e) {
+            let paste = (e.clipboardData || window.clipboardData).getData('text');
+            if (paste.indexOf('\t') === -1 && paste.indexOf('\n') === -1) return; 
+
+            let activeInput = document.activeElement;
+            if (activeInput.tagName !== 'INPUT') return;
+            e.preventDefault();
+            
+            let rows = paste.split(/\r\n|\n|\r/).filter(row => row.trim() !== '');
+            let startRowTr = activeInput.closest('tr');
+            let tbody = document.getElementById('inputTbody');
+            let startRowIndex = Array.from(tbody.children).indexOf(startRowTr);
+            
+            let visibleInputsInStartRow = Array.from(startRowTr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden'));
+            let startColIndex = visibleInputsInStartRow.indexOf(activeInput);
+            
+            if (startColIndex === -1) return;
+
+            while (tbody.children.length < startRowIndex + rows.length) { addRow(); }
+
+            for (let i = 0; i < rows.length; i++) {
+                let cols = rows[i].split('\t');
+                let tr = tbody.children[startRowIndex + i];
+                let visibleInputs = Array.from(tr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden'));
+                
+                for (let j = 0; j < cols.length; j++) {
+                    let targetColIndex = startColIndex + j;
+                    if (targetColIndex < visibleInputs.length) {
+                        visibleInputs[targetColIndex].value = cols[j].trim();
+                    }
+                }
+            }
+        });
+    }
+
+    function handleDocsUpload(event) { 
+        const files = event.target.files;
+        if (!files) return;
+        for (let i = 0; i < files.length; i++) { processDocsFile(files[i]); }
+        event.target.value = ''; 
+    }
+    
     function handleDocsCapture(event) { processDocsFile(event.target.files[0]); }
     
     function processDocsFile(file) {
@@ -505,6 +555,8 @@
 
     function renderDocsPreview() {
         const container = document.getElementById('docsPreviewContainer');
+        if (!container) return;
+        
         if (docsPhotos.length === 0) {
             container.innerHTML = `<p class="text-gray-400 text-sm italic" id="docsEmptyText">Belum ada foto yang ditambahkan.</p>`;
             return;
@@ -512,8 +564,7 @@
         container.innerHTML = '';
         docsPhotos.forEach(src => {
             const img = document.createElement('img');
-            img.src = src;
-            img.className = "h-32 object-contain border rounded shadow-sm";
+            img.src = src; img.className = "h-32 object-contain border rounded shadow-sm";
             container.appendChild(img);
         });
     }
@@ -526,58 +577,89 @@
     }
 
     function buildPreview() {
-        document.getElementById('outTanggal').innerText = formatDate(document.getElementById('inTanggal').value);
-        document.getElementById('outNoSurat').innerText = document.getElementById('inNoSurat').value;
-        document.getElementById('outDari').innerText = document.getElementById('inDari').value;
-        document.getElementById('outKe').innerText = document.getElementById('inKe').value;
-        document.getElementById('outSTO').innerText = document.getElementById('inNoSTO').value;
-        document.getElementById('outGI').innerText = document.getElementById('inNoGI').value;
+        // Teks Informasi (Aman karena dicek eksistensinya via helper)
+        setText('outTanggal', formatDate(getVal('inTanggal')));
+        setText('outNoSurat', getVal('inNoSurat'));
+        setText('outDari', getVal('inDari'));
+        setText('outKe', getVal('inKe'));
+        setText('outSTO', getVal('inNoSTO'));
+        setText('outGI', getVal('inNoGI'));
+        setText('outWO', getVal('inNoWO'));
+        setText('outMO', getVal('inNoMO'));
 
-        // Sync signers
-        document.getElementById('outTtd1').value = document.getElementById('inTtd1').value;
-        document.getElementById('outTtd2').value = document.getElementById('inTtd2').value;
-        document.getElementById('outTtd3').value = document.getElementById('inTtd3').value;
-        document.getElementById('outTtd4').value = document.getElementById('inTtd4').value;
-        document.getElementById('outTtd4Phone').value = document.getElementById('inTtd4Phone').value;
-        document.getElementById('outTtd5').value = document.getElementById('inTtd5').value;
+        // Nama Tanda Tangan
+        setVal('outTtd1', getVal('inTtd1'));
+        setVal('outTtd2', getVal('inTtd2'));
+        setVal('outTtd3', getVal('inTtd3'));
+        setVal('outTtd4', getVal('inTtd4'));
+        setVal('outTtd4Phone', getVal('inTtd4Phone'));
+        setVal('outTtd5', getVal('inTtd5'));
 
-        const noSurat = document.getElementById('inNoSurat').value || 'BSS';
-        try { JsBarcode("#barcode", noSurat, { height: 25, displayValue: true, fontSize: 10, margin: 0 }); } catch(e) {}
-
-        const mode = document.getElementById('docMode').value;
-        const table = document.getElementById('previewTable');
-        if (mode === 'comex') {
-            table.classList.add('comex-mode');
-            document.getElementById('docTitleLabel').innerText = "SURAT JALAN COMEX";
-        } else {
-            table.classList.remove('comex-mode');
-            document.getElementById('docTitleLabel').innerText = "SURAT JALAN KELUAR";
+        // Logika Stempel Approved
+        const stamp = document.getElementById('outApproveStamp');
+        const checkStamp = document.getElementById('inApproveStamp');
+        if (stamp && checkStamp) {
+            stamp.style.display = checkStamp.checked ? 'block' : 'none';
         }
 
-        const outTbody = document.getElementById('outTbody');
-        outTbody.innerHTML = '';
-        document.querySelectorAll('#inputTbody tr').forEach((row, index) => {
-            const i = row.querySelectorAll('input');
-            outTbody.innerHTML += `<tr>
-                <td class="col-num">${index + 1}</td><td class="col-std">${i[0].value}</td><td class="col-desc">${i[1].value}</td>
-                <td class="col-comex">${i[2].value}</td><td class="col-comex">${i[3].value}</td><td class="col-std">${i[4].value}</td>
-                <td class="col-std">${i[5].value}</td><td class="col-std">${i[6].value}</td><td class="col-std">${i[7].value}</td><td class="col-std">${i[8].value}</td>
-            </tr>`;
-        });
+        const noSurat = getVal('inNoSurat') || 'BSS';
+        try { JsBarcode("#barcode", noSurat, { height: 25, displayValue: true, fontSize: 10, margin: 0 }); } catch(e) {}
 
+        const mode = getVal('docMode');
+        const table = document.getElementById('previewTable');
+        const comexPreviewInfo = document.getElementById('comexPreviewInfo');
+        
+        if (table) {
+            if (mode === 'comex') {
+                table.classList.add('comex-mode');
+                setText('docTitleLabel', 'SURAT JALAN COMEX');
+                if (comexPreviewInfo) comexPreviewInfo.classList.remove('hidden');
+            } else {
+                table.classList.remove('comex-mode');
+                setText('docTitleLabel', 'SURAT JALAN KELUAR');
+                if (comexPreviewInfo) comexPreviewInfo.classList.add('hidden');
+            }
+        }
+
+        // Susun Baris Tabel Material
+        const outTbody = document.getElementById('outTbody');
+        if (outTbody) {
+            outTbody.innerHTML = '';
+            document.querySelectorAll('#inputTbody tr').forEach((row, index) => {
+                const i = row.querySelectorAll('input');
+                if (i.length >= 9) {
+                    outTbody.innerHTML += `<tr>
+                        <td class="col-num">${index + 1}</td>
+                        <td class="col-std">${i[0].value || ''}</td>
+                        <td class="col-desc">${i[1].value || ''}</td>
+                        <td class="col-std">${i[2].value || ''}</td>
+                        <td class="col-comex">${i[3].value || ''}</td>
+                        <td class="col-comex">${i[4].value || ''}</td>
+                        <td class="col-std">${i[5].value || ''}</td>
+                        <td class="col-std">${i[6].value || ''}</td>
+                        <td class="col-std">${i[7].value || ''}</td>
+                        <td class="col-std">${i[8].value || ''}</td>
+                    </tr>`;
+                }
+            });
+        }
+
+        // Susun Lampiran
         const lampiranBox = document.getElementById('previewLampiran');
         const lampiranImgContainer = document.getElementById('lampiranImages');
-        lampiranImgContainer.innerHTML = '';
         
-        if(docsPhotos.length > 0) {
-            lampiranBox.classList.remove('hidden');
-            docsPhotos.forEach(src => {
-                const img = document.createElement('img');
-                img.src = src; img.className = "lampiran-img";
-                lampiranImgContainer.appendChild(img);
-            });
-        } else {
-            lampiranBox.classList.add('hidden');
+        if (lampiranBox && lampiranImgContainer) {
+            lampiranImgContainer.innerHTML = '';
+            if(docsPhotos.length > 0) {
+                lampiranBox.classList.remove('hidden');
+                docsPhotos.forEach(src => {
+                    const img = document.createElement('img');
+                    img.src = src; img.className = "lampiran-img";
+                    lampiranImgContainer.appendChild(img);
+                });
+            } else {
+                lampiranBox.classList.add('hidden');
+            }
         }
     }
 
@@ -585,12 +667,14 @@
 
     function downloadPDF() {
         const element = document.getElementById('pdfArea');
+        if(!element) return;
+        
         element.style.boxShadow = 'none';
 
+        // Konversi input tanda tangan agar fix saat di-render
         const inputs = element.querySelectorAll('input');
         const backupValues = [];
 
-        // Konversi sementara input jadi teks murni agar PDF sejajar
         inputs.forEach(input => {
             backupValues.push({ el: input, val: input.value, parent: input.parentNode });
             const span = document.createElement('div');
@@ -600,7 +684,7 @@
         });
 
         html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
-            // Kembalikan elemen input setelah dirender canvas
+            // Restore Inputs
             backupValues.forEach(item => {
                 const tempDiv = item.parent.querySelector('div');
                 if(tempDiv) { tempDiv.replaceWith(item.el); }
@@ -625,7 +709,8 @@
                 heightLeft -= pageHeight;
             }
             
-            pdf.save(`Surat_Jalan_${document.getElementById('inNoSurat').value.replace(/\//g, '-') || 'BSS'}.pdf`);
+            const fileNo = getVal('inNoSurat').replace(/\//g, '-') || 'BSS';
+            pdf.save(`Surat_Jalan_${fileNo}.pdf`);
             element.style.boxShadow = '';
         }).catch(err => {
             backupValues.forEach(item => {
@@ -644,35 +729,43 @@
         let materialsData = [];
         document.querySelectorAll('#inputTbody tr').forEach(row => {
             const i = row.querySelectorAll('input');
-            materialsData.push(`${i[0].value} | ${i[1].value} | Qty:${i[5].value}`);
+            if(i.length > 5) {
+                materialsData.push(`${i[0].value} | ${i[1].value} | Qty:${i[5].value}`);
+            }
         });
+
+        const noSurat = getVal('inNoSurat');
+        const tanggal = getVal('inTanggal');
 
         fetch(scriptURL, {
             method: 'POST', mode: 'no-cors', cache: 'no-cache', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                action: 'save_data', tanggal: document.getElementById('inTanggal').value, noSurat: document.getElementById('inNoSurat').value,
-                noSTO: document.getElementById('inNoSTO').value, noGI: document.getElementById('inNoGI').value, dari: document.getElementById('inDari').value,
-                ke: document.getElementById('inKe').value, materials: materialsData.join("\n"),
-                ttd1: document.getElementById('inTtd1').value, ttd2: document.getElementById('inTtd2').value, 
-                ttd3: document.getElementById('inTtd3').value, ttd4: document.getElementById('inTtd4').value + ' (' + document.getElementById('inTtd4Phone').value + ')', ttd5: document.getElementById('inTtd5').value,
+                action: 'save_data', tanggal: tanggal, noSurat: noSurat,
+                noSTO: getVal('inNoSTO'), noGI: getVal('inNoGI'), dari: getVal('inDari'),
+                ke: getVal('inKe'), materials: materialsData.join("\n"),
+                ttd1: getVal('inTtd1'), ttd2: getVal('inTtd2'), 
+                ttd3: getVal('inTtd3'), ttd4: getVal('inTtd4') + ' (' + getVal('inTtd4Phone') + ')', ttd5: getVal('inTtd5'),
                 images: docsPhotos
             })
         }).then(() => {
-            // Auto Increment Nomor Surat Jalan
-            const dateVal = document.getElementById('inTanggal').value;
-            const d = new Date(dateVal);
+            // Auto Increment Nomor Surat Jalan untuk dokumen selanjutnya
+            const d = new Date(tanggal);
             const pad = (n) => n.toString().padStart(2, '0');
             const dateStr = `${pad(d.getDate())}${pad(d.getMonth()+1)}${d.getFullYear().toString().slice(-2)}`;
             
-            let storedData = JSON.parse(localStorage.getItem('bss_surat_seq')) || { date: dateStr, seq: 1 };
+            let storedData = JSON.parse(localStorage.getItem('bss_surat_seq'));
+            let currentSeq = 1;
             
-            if (storedData.date === dateStr) { storedData.seq += 1; } 
-            else { storedData = { date: dateStr, seq: 1 }; }
+            if (storedData && storedData.date === dateStr) { 
+                currentSeq = storedData.seq; 
+            }
             
-            localStorage.setItem('bss_surat_seq', JSON.stringify(storedData));
-            syncNoSurat(); // Refresh visual kolom
+            let nextSeq = currentSeq + 1;
+            localStorage.setItem('bss_surat_seq', JSON.stringify({ date: dateStr, seq: nextSeq }));
+            
+            syncNoSurat(); // Refresh tampilan form dengan nomor baru
 
-            showAlert("Sukses", "Data disimpan! Urutan nomor surat telah ditingkatkan."); 
+            showAlert("Sukses", "Data disimpan! Urutan nomor surat telah ditingkatkan otomatis."); 
             btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
         }).catch(err => {
             showAlert("Error", "Gagal menyimpan: " + err); btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
@@ -682,7 +775,7 @@
     function handleValFileSelect(event) {
         const file = event.target.files[0];
         if (!file) return;
-        document.getElementById('valSelectedFileName').innerText = file.name;
+        setText('valSelectedFileName', file.name);
         validasiMimeType = file.type;
         const reader = new FileReader();
         reader.onload = function(e) { validasiFileBase64 = e.target.result.split(',')[1]; };
@@ -696,10 +789,10 @@
 
         fetch(scriptURL, {
             method: 'POST',
-            body: JSON.stringify({ action: 'upload_validasi', noSurat: document.getElementById('valNoSurat').value, fileData: validasiFileBase64, mimeType: validasiMimeType })
+            body: JSON.stringify({ action: 'upload_validasi', noSurat: getVal('valNoSurat'), fileData: validasiFileBase64, mimeType: validasiMimeType })
         }).then(res => res.json()).then(resData => {
             if(resData.status === 'success') {
-                showAlert("Sukses", resData.message); document.getElementById('uploadedValidasiUrl').value = resData.fileUrl || "";
+                showAlert("Sukses", resData.message); setVal('uploadedValidasiUrl', resData.fileUrl || "");
             } else showAlert("Error", "Gagal upload: " + resData.message);
             btn.innerText = "🚀 UPLOAD KE GOOGLE DRIVE"; btn.disabled = false;
         }).catch(err => {
@@ -708,22 +801,21 @@
     }
 
     function shareWhatsApp() {
-        const dari = document.getElementById('inDari').value || "-"; const ke = document.getElementById('inKe').value || "-";
-        const tgl = formatDate(document.getElementById('inTanggal').value) || "-"; const noSurat = document.getElementById('inNoSurat').value || "-";
-        const fileUrl = document.getElementById('uploadedValidasiUrl').value;
+        const dari = getVal('inDari') || "-"; const ke = getVal('inKe') || "-";
+        const tgl = formatDate(getVal('inTanggal')) || "-"; const noSurat = getVal('inNoSurat') || "-";
+        const fileUrl = getVal('uploadedValidasiUrl');
 
         let text = `*Informasi Pengiriman Barang – Surat Jalan*\nNo Surat: ${noSurat}\nDikirim Dari: ${dari}\nDikirim Ke: ${ke}\nTanggal: ${tgl}\n\n`;
         text += fileUrl ? `*Link Dokumen Validasi:*\n${fileUrl}\n` : `_(Dokumen validasi belum diunggah ke Drive)_\n`;
         
-        // Coba fitur lampirkan File bawaan HP jika dibuka dari mobile
         if (/Android|webOS|iPhone|iPad/i.test(navigator.userAgent) && validasiFileBase64) {
             const b = atob(validasiFileBase64); const ab = new Uint8Array(b.length);
             for (let i = 0; i < b.length; i++) ab[i] = b.charCodeAt(i);
             const file = new File([new Blob([ab], {type: validasiMimeType})], "Validasi_" + noSurat.replace(/\//g, "-") + (validasiMimeType.includes('pdf')?'.pdf':'.jpg'), { type: validasiMimeType });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) return navigator.share({ title: 'Dokumen', text: text, files: [file] }).catch(e=>console.log(e));
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                return navigator.share({ title: 'Dokumen', text: text, files: [file] }).catch(e=>console.log(e));
+            }
         }
-        
-        // Fallback untuk Web Desktop / PC (Kirim Link saja)
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     }
 </script>
