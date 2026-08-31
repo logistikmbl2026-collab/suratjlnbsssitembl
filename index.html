@@ -40,26 +40,31 @@
 
         .info-text { font-size: 11px; margin-bottom: 8px; line-height: 1.4; }
         
-        /* Tabel Material Utama (Dipaksa Rata Tengah) */
+        /* Tabel Material Utama (Dipaksa Rata Tengah Horizontal & Vertikal) */
         .pdf-table { width: 100%; border-collapse: collapse; table-layout: fixed; word-wrap: break-word; margin-top: 5px; }
         .pdf-table th, .pdf-table td { 
-            border: 1px solid #000; 
-            padding: 5px 4px; 
-            font-size: 10px; 
+            border: 1px solid #000 !important; 
+            padding: 5px 4px !important; 
+            font-size: 10px !important; 
             text-align: center !important; 
             vertical-align: middle !important; 
         }
         .pdf-table th { font-weight: bold; background-color: #f9fafb; }
         
-        .col-num { width: 5%; }
-        .col-desc { width: 28%; }
+        .col-num { width: 4%; }
+        .col-desc { width: 25%; }
         .col-std { width: 9%; }
         
         /* Lebar Kolom Dinamis Comex */
-        .pdf-table.comex-mode .col-desc { width: 18%; }
+        .pdf-table.comex-mode .col-desc { width: 16%; }
         .pdf-table.comex-mode .col-std { width: 7%; }
-        .col-comex { width: 9%; display: none; }
+        .col-comex { width: 8%; display: none; }
         .comex-mode .col-comex { display: table-cell; }
+
+        /* Mode Budget CSS (Menyembunyikan Kolom & Formasi 4 TTD) */
+        .table-budget-mode .col-hide-budget { display: none !important; }
+        .sig-budget-mode td { width: 25% !important; }
+        .sig-budget-mode .sig-col-5 { display: none !important; }
 
         /* Kotak Lampiran Foto */
         .lampiran-box { border: 2px solid #000; border-top: none; padding: 8px; text-align: center; page-break-inside: avoid; }
@@ -86,17 +91,18 @@
         .alert-box h3 { margin-top: 0; font-size: 18px; font-weight: bold; }
         .alert-box button { margin-top: 15px; background: #3b82f6; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
 
+        /* Aturan Khusus Printer Fisik untuk Mencegah Halaman Kosong */
         @media print {
             body, html { background: white; margin: 0; padding: 0; height: auto; }
             .no-print { display: none !important; }
+            #print-wrapper { overflow: visible !important; width: 100% !important; display: block !important; }
             .a4-container { box-shadow: none; margin: 0; padding: 5mm; width: 100%; min-height: auto !important; page-break-after: avoid; }
-            /* Orientasi Cetak Dinamis akan Diatur via JS di bawah */
         }
     </style>
     
     <!-- Tag Style Khusus untuk Mengatur Orientasi Kertas Saat Diprint (Dinamis) -->
     <style id="page-orientation-style">
-        @page { size: A4 portrait; margin: 0mm; }
+        @page { size: portrait; margin: 0mm; }
     </style>
 </head>
 <body class="text-gray-800">
@@ -140,6 +146,7 @@
                 <select id="docMode" onchange="toggleComexMode()" class="w-full p-2 border rounded bg-gray-50 focus:ring-blue-500 font-semibold text-blue-700">
                     <option value="logistik">OPSI 1 : SURAT JALAN KELUAR (Logistik)</option>
                     <option value="comex">OPSI 2 : SURAT JALAN COMEX</option>
+                    <option value="budget">OPSI 3 : SERAH TERIMA BUDGET</option>
                 </select>
             </div>
             <div>
@@ -158,27 +165,34 @@
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div>
                 <label class="block text-sm font-semibold mb-1">Tanggal</label>
-                <input type="date" id="inTanggal" onchange="syncNoSurat()" class="w-full p-2 border rounded focus:ring-blue-500">
+                <input type="date" id="inTanggal" onchange="syncNoSurat()" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
-            <div>
+            <div class="lg:col-span-2">
                 <label class="block text-sm font-semibold mb-1">Nomor Surat Jalan</label>
-                <input type="text" id="inNoSurat" readonly class="w-full p-2 border rounded bg-gray-200 text-gray-700 font-bold cursor-not-allowed" title="Nomor dibuat otomatis berdasarkan urutan sistem">
+                <input type="text" id="inNoSurat" readonly class="w-full p-2 border rounded bg-gray-200 text-gray-700 font-bold cursor-not-allowed text-center" title="Nomor dibuat otomatis berdasarkan urutan sistem">
             </div>
             <div>
                 <label class="block text-sm font-semibold mb-1">No. STO / PO</label>
-                <input type="text" id="inNoSTO" class="w-full p-2 border rounded focus:ring-blue-500">
+                <input type="text" id="inNoSTO" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
             <div>
                 <label class="block text-sm font-semibold mb-1">No. GI</label>
-                <input type="text" id="inNoGI" class="w-full p-2 border rounded focus:ring-blue-500">
+                <input type="text" id="inNoGI" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
-            <div>
+            <div></div> <!-- Spacer -->
+            <div class="lg:col-span-3">
                 <label class="block text-sm font-semibold mb-1">Dikirim Dari</label>
                 <input type="text" id="inDari" value="BSS" class="w-full p-2 border rounded focus:ring-blue-500">
             </div>
-            <div>
+            <div class="lg:col-span-3">
                 <label class="block text-sm font-semibold mb-1">Dikirim Ke</label>
-                <input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500">
+                <div id="wrap-ke">
+                    <input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500">
+                </div>
+            </div>
+            <div class="lg:col-span-6 hidden" id="wrap-cost-center">
+                <label class="block text-sm font-semibold mb-1">Cost Center</label>
+                <input type="text" id="inCostCenter" readonly class="w-full p-2 border rounded bg-gray-200 text-gray-700 font-bold cursor-not-allowed">
             </div>
         </div>
     </div>
@@ -186,35 +200,35 @@
     <!-- Input Data Penandatangan -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6 border-l-4 border-indigo-500">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Informasi Penandatangan (Signers)</h2>
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="signer-grid">
             <div>
                 <label class="block text-sm font-semibold mb-1">Dibuat oleh</label>
-                <input type="text" id="inTtd1" value="User Pengirim" class="w-full p-2 border rounded focus:ring-blue-500">
+                <input type="text" id="inTtd1" value="User Pengirim" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
                 <label class="inline-flex items-center mt-2 cursor-pointer">
                     <input type="checkbox" id="inApproveStamp" class="form-checkbox h-4 w-4 text-red-600 rounded border-gray-300">
                     <span class="ml-2 text-xs font-bold text-red-600">+ Cap APPROVED</span>
                 </label>
             </div>
             <div>
-                <label class="block text-sm font-semibold mb-1">Diketahui oleh</label>
-                <input type="text" id="inTtd2" value="Atasan Langsung" class="w-full p-2 border rounded focus:ring-blue-500">
-                <label class="inline-flex items-center mt-2 cursor-pointer">
+                <label id="label-ttd2" class="block text-sm font-semibold mb-1">Diketahui oleh</label>
+                <input type="text" id="inTtd2" value="Atasan Langsung" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
+                <label class="inline-flex items-center mt-2 cursor-pointer" id="wrap-approve-atasan">
                     <input type="checkbox" id="inApproveAtasan" class="form-checkbox h-4 w-4 text-green-600 rounded border-gray-300">
                     <span class="ml-2 text-xs font-bold text-green-600">+ Cap APPROVED (Atasan)</span>
                 </label>
             </div>
             <div>
-                <label class="block text-sm font-semibold mb-1">Diperiksa oleh</label>
-                <input type="text" id="inTtd3" value="Security" class="w-full p-2 border rounded focus:ring-blue-500">
+                <label id="label-ttd3" class="block text-sm font-semibold mb-1">Diperiksa oleh</label>
+                <input type="text" id="inTtd3" value="Security" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
             <div>
-                <label class="block text-sm font-semibold mb-1">Dibawa oleh</label>
-                <input type="text" id="inTtd4" value="Delivery" class="w-full p-2 border rounded focus:ring-blue-500 mb-2" placeholder="Nama Driver">
-                <input type="text" id="inTtd4Phone" value="0812..." class="w-full p-2 border rounded focus:ring-blue-500 text-sm bg-gray-50" placeholder="No. Telp">
+                <label id="label-ttd4" class="block text-sm font-semibold mb-1">Dibawa oleh</label>
+                <input type="text" id="inTtd4" value="Delivery" class="w-full p-2 border rounded focus:ring-blue-500 mb-2 text-center" placeholder="Nama Driver">
+                <input type="text" id="inTtd4Phone" value="0812..." class="w-full p-2 border rounded focus:ring-blue-500 text-sm bg-gray-50 text-center" placeholder="No. Telp">
             </div>
-            <div>
+            <div id="signer5-container">
                 <label class="block text-sm font-semibold mb-1">Diterima oleh</label>
-                <input type="text" id="inTtd5" value="User Penerima" class="w-full p-2 border rounded focus:ring-blue-500">
+                <input type="text" id="inTtd5" value="User Penerima" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
         </div>
     </div>
@@ -222,21 +236,21 @@
     <!-- Tabel Material -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6 overflow-x-auto">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Daftar Material</h2>
-        <table class="w-full text-sm text-center border">
+        <table class="w-full text-sm text-center border" id="inputTableMaterial">
             <thead class="bg-gray-100 border-b">
                 <tr>
-                    <th class="p-2 border text-center">Material</th>
-                    <th class="p-2 border text-center">Material Description</th>
-                    <th class="p-2 border text-center">Mfr Part Number</th>
-                    <th class="p-2 border text-center col-input-comex hidden bg-yellow-100">SN Module</th>
-                    <th class="p-2 border text-center col-input-comex hidden bg-yellow-100">Eks Unit</th>
-                    <th class="p-2 border text-center w-20">Qty</th>
-                    <th class="p-2 border text-center w-24">Uom</th>
-                    <th class="p-2 border text-center">Batch</th>
-                    <th class="p-2 border text-center col-input-comex hidden bg-yellow-100">No. WO</th>
-                    <th class="p-2 border text-center col-input-comex hidden bg-yellow-100">No. MO Reff</th>
-                    <th class="p-2 border text-center">Remarks</th>
-                    <th class="p-2 border text-center">Aksi</th>
+                    <th class="p-2 border text-center align-middle">Material</th>
+                    <th class="p-2 border text-center align-middle col-hide-budget">Material Description</th>
+                    <th class="p-2 border text-center align-middle">Mfr Part Number</th>
+                    <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">SN Module</th>
+                    <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">Eks Unit</th>
+                    <th class="p-2 border text-center align-middle w-20">Qty</th>
+                    <th class="p-2 border text-center align-middle w-24">Uom</th>
+                    <th class="p-2 border text-center align-middle col-hide-budget">Batch</th>
+                    <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">No. WO</th>
+                    <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">No. MO Reff</th>
+                    <th class="p-2 border text-center align-middle col-hide-budget" id="inputHeaderRemarks">Remarks</th>
+                    <th class="p-2 border text-center align-middle">Aksi</th>
                 </tr>
             </thead>
             <tbody id="inputTbody"></tbody>
@@ -281,8 +295,7 @@
         <button onclick="downloadPDF()" class="bg-red-600 text-white px-6 py-2 rounded shadow hover:bg-red-700 font-bold">📄 Download PDF</button>
     </div>
 
-    <!-- Wrapper Anti Overlap agar layout landscape di HP tidak rusak -->
-    <div class="w-full overflow-x-auto shadow-2xl pb-4 flex justify-center">
+    <div class="w-full overflow-x-auto shadow-2xl pb-4 flex justify-center" id="print-wrapper">
         <div class="a4-container bg-white" id="pdfArea">
             <table class="pdf-header-table">
                 <tr>
@@ -315,10 +328,11 @@
                         <tr><td>No. Surat</td><td>: <span id="outNoSurat" style="font-weight:bold; font-size: 12px;"></span></td></tr>
                         <tr><td>Dari</td><td>: <span id="outDari"></span></td></tr>
                         <tr><td>Ke</td><td>: <span id="outKe"></span></td></tr>
+                        <tr id="row-out-cost-center" style="display:none;"><td>Cost Center</td><td>: <span id="outCostCenter"></span></td></tr>
                     </table>
                 </div>
-                <div style="text-align:right;">
-                    <svg id="barcode"></svg>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; text-align:right;">
+                    <svg id="barcode" style="max-width: 200px;"></svg>
                     <div style="font-size:9px; margin-top:2px;">No STO/PO: <span id="outSTO"></span> | No GI: <span id="outGI"></span></div>
                 </div>
             </div>
@@ -328,16 +342,16 @@
                     <tr>
                         <th class="col-num">No</th>
                         <th class="col-std">Material</th>
-                        <th class="col-desc">Material description</th>
+                        <th class="col-desc col-hide-budget">Material description</th>
                         <th class="col-std">Mfr Part Number</th>
                         <th class="col-comex">SN Module</th>
                         <th class="col-comex">Eks Unit</th>
                         <th class="col-std" style="width: 5%;">Qty</th>
                         <th class="col-std" style="width: 5%;">Uom</th>
-                        <th class="col-std" style="width: 8%;">Batch</th>
+                        <th class="col-std col-hide-budget" style="width: 8%;">Batch</th>
                         <th class="col-comex">No. WO</th>
                         <th class="col-comex">No. MO Reff</th>
-                        <th class="col-std">Remarks</th>
+                        <th class="col-std col-hide-budget" id="previewHeaderRemarks">Remarks</th>
                     </tr>
                 </thead>
                 <tbody id="outTbody"></tbody>
@@ -349,14 +363,14 @@
                 <div id="lampiranImages" style="text-align:center;"></div>
             </div>
 
-            <!-- Tabel Tanda Tangan (Sejajar Sempurna 4 Baris) -->
-            <table class="signature-table">
+            <!-- Tabel Tanda Tangan (Sejajar Sempurna 4/5 Baris Tergantung Mode) -->
+            <table class="signature-table" id="previewSignatureTable">
                 <tr class="sig-title-row">
                     <td>Dibuat oleh,</td>
-                    <td>Diketahui oleh,</td>
-                    <td>Diperiksa oleh,</td>
-                    <td>Dibawa oleh,</td>
-                    <td>Diterima oleh,</td>
+                    <td id="outLabelTtd2">Diketahui oleh,</td>
+                    <td id="outLabelTtd3">Diperiksa oleh,</td>
+                    <td id="outLabelTtd4">Dibawa oleh,</td>
+                    <td class="sig-col-5">Diterima oleh,</td>
                 </tr>
                 <tr class="sig-space-row">
                     <td>
@@ -365,19 +379,19 @@
                     <td>
                         <div id="outApproveAtasanStamp" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%) rotate(-15deg); border: 2px solid #16a34a; color: #16a34a; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 14px; letter-spacing: 2px; opacity: 0.8; z-index: 10;">APPROVED</div>
                     </td>
-                    <td></td><td></td><td></td>
+                    <td></td><td></td><td class="sig-col-5"></td>
                 </tr>
                 <tr class="sig-name-row">
                     <td><div class="signature-line"></div><input type="text" id="outTtd1" class="sig-input" readonly></td>
                     <td><div class="signature-line"></div><input type="text" id="outTtd2" class="sig-input" readonly></td>
                     <td><div class="signature-line"></div><input type="text" id="outTtd3" class="sig-input" readonly></td>
                     <td><div class="signature-line"></div><input type="text" id="outTtd4" class="sig-input" readonly></td>
-                    <td><div class="signature-line"></div><input type="text" id="outTtd5" class="sig-input" readonly></td>
+                    <td class="sig-col-5"><div class="signature-line"></div><input type="text" id="outTtd5" class="sig-input" readonly></td>
                 </tr>
                 <tr class="sig-phone-row">
                     <td></td><td></td><td></td>
                     <td><input type="text" id="outTtd4Phone" class="sig-input-phone" readonly></td>
-                    <td></td>
+                    <td class="sig-col-5"></td>
                 </tr>
             </table>
 
@@ -397,7 +411,7 @@
         
         <div class="mb-4">
             <label class="block text-sm font-semibold mb-1">Nomor Surat Jalan</label>
-            <input type="text" id="valNoSurat" readonly class="w-full p-3 border rounded bg-gray-100 font-bold text-blue-800">
+            <input type="text" id="valNoSurat" readonly class="w-full p-3 border rounded bg-gray-100 font-bold text-blue-800 text-center">
         </div>
 
         <div class="mb-6">
@@ -452,7 +466,7 @@
         let tbody = document.getElementById('inputTbody');
         let startRowIndex = Array.from(tbody.children).indexOf(startRowTr);
         
-        let visibleInputsInStartRow = Array.from(startRowTr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden'));
+        let visibleInputsInStartRow = Array.from(startRowTr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden') && !inp.closest('td').classList.contains('col-hide-budget'));
         let startColIndex = visibleInputsInStartRow.indexOf(activeInput);
         
         if (startColIndex === -1) return;
@@ -462,7 +476,7 @@
         for (let i = 0; i < rows.length; i++) {
             let cols = rows[i].split('\t');
             let tr = tbody.children[startRowIndex + i];
-            let visibleInputs = Array.from(tr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden'));
+            let visibleInputs = Array.from(tr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden') && !inp.closest('td').classList.contains('col-hide-budget'));
             
             for (let j = 0; j < cols.length; j++) {
                 let targetColIndex = startColIndex + j;
@@ -496,6 +510,33 @@
     
     function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
 
+    const costCenterMap = {
+        "MBL Gen Cost": "A440010000",
+        "MBL DATA CENTER": "A440010100",
+        "MBL Mining Academy": "A440010110",
+        "MBL OD": "A440010120",
+        "MBL GS": "A440010130",
+        "MBL Finance": "A440010140",
+        "MBL Supply Managemen": "A440010150",
+        "MBL CIVIL": "A440010170",
+        "MBL Engineering": "A440010200",
+        "MBL HRDGA": "A440010300",
+        "MBL IT": "A440010400",
+        "MBL Mat Management": "A440010500",
+        "MBL Produksi": "A440010600",
+        "MBL Rep Maintenance": "A440010700",
+        "MBL SHE": "A440010800",
+        "MBL Operation": "A440010900"
+    };
+
+    function updateCostCenter() {
+        const keEl = document.getElementById('inKe');
+        const ccEl = document.getElementById('inCostCenter');
+        if (keEl && keEl.tagName === 'SELECT') {
+            ccEl.value = costCenterMap[keEl.value] || '';
+        }
+    }
+
     function switchTab(tabId) {
         ['input', 'preview', 'validasi'].forEach(id => {
             document.getElementById('tab-' + id).classList.add('hidden');
@@ -509,15 +550,139 @@
     function toggleComexMode() {
         const mode = document.getElementById('docMode').value;
         const comexCols = document.querySelectorAll('.col-input-comex');
+        const inputTable = document.getElementById('inputTableMaterial');
+        const signerGrid = document.getElementById('signer-grid');
+        const sigCol5Inputs = document.getElementById('signer5-container');
+        const ttd2Label = document.getElementById('label-ttd2');
+        const ttd3Label = document.getElementById('label-ttd3');
+        const ttd4Label = document.getElementById('label-ttd4');
+        const ttd4Phone = document.getElementById('inTtd4Phone');
+        
+        // Elemen Cap dan Stempel
+        const wrapApproveAtasan = document.getElementById('wrap-approve-atasan');
+        const outApproveAtasanStamp = document.getElementById('outApproveAtasanStamp');
+        const containerTtd2 = document.getElementById('inTtd2').parentElement;
+        const containerTtd4 = document.getElementById('inTtd4').parentElement;
+        const sigSpaceRow = document.querySelector('.sig-space-row');
+        
+        // Element pembungkus Dikirim Ke & Cost Center
+        const wrapKe = document.getElementById('wrap-ke');
+        const wrapCostCenter = document.getElementById('wrap-cost-center');
+        const rowOutCostCenter = document.getElementById('row-out-cost-center');
         
         if (mode === 'comex') {
             comexCols.forEach(el => el.classList.remove('hidden'));
+            inputTable.classList.remove('table-budget-mode');
+            
             document.getElementById('pageOrientation').value = 'landscape';
+            
+            signerGrid.classList.remove('md:grid-cols-4');
+            signerGrid.classList.add('md:grid-cols-5');
+            sigCol5Inputs.style.display = 'block';
+            
+            document.getElementById('inputHeaderRemarks').innerText = "Remarks";
+            document.getElementById('previewHeaderRemarks').innerText = "Remarks";
+            
+            ttd2Label.innerText = "Diketahui oleh";
+            ttd3Label.innerText = "Diperiksa oleh";
+            ttd4Label.innerText = "Dibawa oleh";
+            ttd4Phone.style.display = 'block';
+            if (document.getElementById('inTtd2').value === 'User') document.getElementById('inTtd2').value = 'Atasan Langsung';
+            if (document.getElementById('inTtd4').value === 'Staff Logistik') document.getElementById('inTtd4').value = 'Delivery';
+            
+            // Kembalikan Cap ke TTD 2
+            if (wrapApproveAtasan && containerTtd2) containerTtd2.appendChild(wrapApproveAtasan);
+            if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[1].appendChild(outApproveAtasanStamp);
+            
+            // Kembalikan Form Dikirim Ke menjadi Ketikan Teks & Sembunyikan Cost Center
+            wrapCostCenter.classList.add('hidden');
+            rowOutCostCenter.style.display = 'none';
+            if (wrapKe && !wrapKe.querySelector('input')) {
+                wrapKe.innerHTML = `<input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500">`;
+            }
+            
+        } else if (mode === 'budget') {
+            comexCols.forEach(el => el.classList.add('hidden'));
+            inputTable.classList.add('table-budget-mode');
+            
+            document.getElementById('pageOrientation').value = 'portrait';
+            
+            signerGrid.classList.remove('md:grid-cols-5');
+            signerGrid.classList.add('md:grid-cols-4');
+            sigCol5Inputs.style.display = 'none';
+            
+            document.getElementById('inputHeaderRemarks').innerText = "Serah Terima Reservasi";
+            document.getElementById('previewHeaderRemarks').innerText = "Serah Terima Reservasi";
+            
+            ttd2Label.innerText = "Diambil Oleh";
+            ttd3Label.innerText = "Diperiksa Oleh";
+            ttd4Label.innerText = "Diketahui Oleh";
+            ttd4Phone.style.display = 'none';
+            document.getElementById('inTtd2').value = "User";
+            document.getElementById('inTtd4').value = "Staff Logistik";
+            
+            // Pindahkan Cap ke TTD 4 (Diketahui Oleh)
+            if (wrapApproveAtasan && containerTtd4) containerTtd4.appendChild(wrapApproveAtasan);
+            if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[3].appendChild(outApproveAtasanStamp);
+            
+            // Ubah Form Dikirim Ke menjadi Dropdown & Munculkan Cost Center
+            wrapCostCenter.classList.remove('hidden');
+            rowOutCostCenter.style.display = 'table-row';
+            if (wrapKe && !wrapKe.querySelector('select')) {
+                wrapKe.innerHTML = `<select id="inKe" onchange="updateCostCenter()" class="w-full p-2 border rounded focus:ring-blue-500 bg-white font-semibold">
+                    <option value="MBL Gen Cost">MBL Gen Cost</option>
+                    <option value="MBL DATA CENTER">MBL DATA CENTER</option>
+                    <option value="MBL Mining Academy">MBL Mining Academy</option>
+                    <option value="MBL OD">MBL OD</option>
+                    <option value="MBL GS">MBL GS</option>
+                    <option value="MBL Finance">MBL Finance</option>
+                    <option value="MBL Supply Managemen">MBL Supply Managemen</option>
+                    <option value="MBL CIVIL">MBL CIVIL</option>
+                    <option value="MBL Engineering">MBL Engineering</option>
+                    <option value="MBL HRDGA">MBL HRDGA</option>
+                    <option value="MBL IT">MBL IT</option>
+                    <option value="MBL Mat Management">MBL Mat Management</option>
+                    <option value="MBL Produksi">MBL Produksi</option>
+                    <option value="MBL Rep Maintenance">MBL Rep Maintenance</option>
+                    <option value="MBL SHE">MBL SHE</option>
+                    <option value="MBL Operation">MBL Operation</option>
+                </select>`;
+                updateCostCenter(); // Load initial value
+            }
+            
         } else {
             comexCols.forEach(el => el.classList.add('hidden'));
+            inputTable.classList.remove('table-budget-mode');
+            
             document.getElementById('pageOrientation').value = 'portrait';
+            
+            signerGrid.classList.remove('md:grid-cols-4');
+            signerGrid.classList.add('md:grid-cols-5');
+            sigCol5Inputs.style.display = 'block';
+            
+            document.getElementById('inputHeaderRemarks').innerText = "Remarks";
+            document.getElementById('previewHeaderRemarks').innerText = "Remarks";
+            
+            ttd2Label.innerText = "Diketahui oleh";
+            ttd3Label.innerText = "Diperiksa oleh";
+            ttd4Label.innerText = "Dibawa oleh";
+            ttd4Phone.style.display = 'block';
+            if (document.getElementById('inTtd2').value === 'User') document.getElementById('inTtd2').value = 'Atasan Langsung';
+            if (document.getElementById('inTtd4').value === 'Staff Logistik') document.getElementById('inTtd4').value = 'Delivery';
+            
+            // Kembalikan Cap ke TTD 2
+            if (wrapApproveAtasan && containerTtd2) containerTtd2.appendChild(wrapApproveAtasan);
+            if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[1].appendChild(outApproveAtasanStamp);
+            
+            // Kembalikan Form Dikirim Ke menjadi Ketikan Teks & Sembunyikan Cost Center
+            wrapCostCenter.classList.add('hidden');
+            rowOutCostCenter.style.display = 'none';
+            if (wrapKe && !wrapKe.querySelector('input')) {
+                wrapKe.innerHTML = `<input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500">`;
+            }
         }
         changeOrientation();
+        syncNoSurat();
     }
 
     function changeOrientation() {
@@ -527,15 +692,17 @@
         
         if (orientation === 'landscape') {
             pdfArea.classList.add('landscape');
-            if (pageStyle) pageStyle.innerHTML = "@page { size: A4 landscape; margin: 0mm; }";
+            if (pageStyle) pageStyle.innerHTML = "@page { size: landscape; margin: 0mm; }";
         } else {
             pdfArea.classList.remove('landscape');
-            if (pageStyle) pageStyle.innerHTML = "@page { size: A4 portrait; margin: 0mm; }";
+            if (pageStyle) pageStyle.innerHTML = "@page { size: portrait; margin: 0mm; }";
         }
     }
 
     function syncNoSurat() {
         const dateVal = document.getElementById('inTanggal').value;
+        const mode = document.getElementById('docMode').value;
+        
         if(dateVal) {
             const d = new Date(dateVal);
             const pad = (n) => n.toString().padStart(2, '0');
@@ -547,10 +714,16 @@
             if (storedData && storedData.date === dateStr) {
                 currentSeq = storedData.seq;
             } else {
-                localStorage.setItem('bss_surat_seq', JSON.stringify({ date: dateStr, seq: 1 }));
+                currentSeq = 1; 
             }
             
-            const noSurat = `BSS/LOG/${dateStr}/${currentSeq.toString().padStart(3, '0')}`;
+            let noSurat = "";
+            if (mode === 'budget') {
+                noSurat = `BSS/LOG-BUDGT/${dateStr}/${currentSeq.toString().padStart(3, '0')}`;
+            } else {
+                noSurat = `BSS/LOG/${dateStr}/${currentSeq.toString().padStart(3, '0')}`;
+            }
+            
             document.getElementById('inNoSurat').value = noSurat;
             document.getElementById('valNoSurat').value = noSurat;
         }
@@ -559,20 +732,21 @@
     function addRow() {
         const tbody = document.getElementById('inputTbody');
         const mode = document.getElementById('docMode').value;
+        const isBudget = mode === 'budget';
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded text-center" name="material"></td>
-            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded text-center" name="desc"></td>
-            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded text-center" name="part"></td>
-            <td class="p-1 border col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="sn"></td>
-            <td class="p-1 border col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="eks"></td>
-            <td class="p-1 border"><input type="number" class="w-full p-1 border rounded text-center" name="qty"></td>
-            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded text-center" name="uom"></td>
-            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded text-center" name="batch"></td>
-            <td class="p-1 border col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="wo"></td>
-            <td class="p-1 border col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="mo"></td>
-            <td class="p-1 border"><input type="text" class="w-full p-1 border rounded text-center" name="remarks"></td>
-            <td class="p-1 border text-center"><button onclick="this.closest('tr').remove()" class="bg-red-500 text-white px-2 py-1 rounded">X</button></td>
+            <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="material"></td>
+            <td class="p-1 border text-center align-middle col-hide-budget"><input type="text" class="w-full p-1 border rounded text-center" name="desc"></td>
+            <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="part"></td>
+            <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="sn"></td>
+            <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="eks"></td>
+            <td class="p-1 border text-center align-middle"><input type="number" class="w-full p-1 border rounded text-center" name="qty"></td>
+            <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="uom"></td>
+            <td class="p-1 border text-center align-middle col-hide-budget"><input type="text" class="w-full p-1 border rounded text-center" name="batch"></td>
+            <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="wo"></td>
+            <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="mo"></td>
+            <td class="p-1 border text-center align-middle col-hide-budget"><input type="text" class="w-full p-1 border rounded text-center" name="remarks"></td>
+            <td class="p-1 border text-center align-middle"><button onclick="this.closest('tr').remove()" class="bg-red-500 text-white px-2 py-1 rounded font-bold">X</button></td>
         `;
         tbody.appendChild(tr);
     }
@@ -585,7 +759,9 @@
     function handleDocsUpload(event) { 
         const files = event.target.files;
         if (!files) return;
-        for (let i = 0; i < files.length; i++) { processDocsFile(files[i]); }
+        for (let i = 0; i < files.length; i++) {
+            processDocsFile(files[i]);
+        }
         event.target.value = ''; 
     }
     
@@ -629,6 +805,9 @@
         document.getElementById('outNoSurat').innerText = document.getElementById('inNoSurat').value;
         document.getElementById('outDari').innerText = document.getElementById('inDari').value;
         document.getElementById('outKe').innerText = document.getElementById('inKe').value;
+        if(document.getElementById('inCostCenter')) {
+            document.getElementById('outCostCenter').innerText = document.getElementById('inCostCenter').value;
+        }
         document.getElementById('outSTO').innerText = document.getElementById('inNoSTO').value;
         document.getElementById('outGI').innerText = document.getElementById('inNoGI').value;
 
@@ -645,22 +824,51 @@
         const checkStamp = document.getElementById('inApproveStamp');
         if (stamp && checkStamp) { stamp.style.display = checkStamp.checked ? 'block' : 'none'; }
 
-        // Logika Stempel Atasan
         const stampAtasan = document.getElementById('outApproveAtasanStamp');
         const checkStampAtasan = document.getElementById('inApproveAtasan');
         if (stampAtasan && checkStampAtasan) { stampAtasan.style.display = checkStampAtasan.checked ? 'block' : 'none'; }
 
         const noSurat = document.getElementById('inNoSurat').value || 'BSS';
-        try { JsBarcode("#barcode", noSurat, { height: 25, displayValue: true, fontSize: 10, margin: 0 }); } catch(e) {}
+        try { JsBarcode("#barcode", noSurat, { width: 1.2, height: 30, displayValue: true, fontSize: 9, margin: 0 }); } catch(e) {}
 
         const mode = document.getElementById('docMode').value;
         const table = document.getElementById('previewTable');
+        const sigTable = document.getElementById('previewSignatureTable');
+        
+        const outLabelTtd2 = document.getElementById('outLabelTtd2');
+        const outLabelTtd3 = document.getElementById('outLabelTtd3');
+        const outLabelTtd4 = document.getElementById('outLabelTtd4');
+
+        // Pengaturan Judul & Tampilan Mode
         if (mode === 'comex') {
             table.classList.add('comex-mode');
+            table.classList.remove('table-budget-mode');
+            sigTable.classList.remove('sig-budget-mode');
             document.getElementById('docTitleLabel').innerText = "SURAT JALAN COMEX";
+            
+            if(outLabelTtd2) outLabelTtd2.innerText = "Diketahui oleh,";
+            if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa oleh,";
+            if(outLabelTtd4) outLabelTtd4.innerText = "Dibawa oleh,";
+            
+        } else if (mode === 'budget') {
+            table.classList.remove('comex-mode');
+            table.classList.add('table-budget-mode');
+            sigTable.classList.add('sig-budget-mode');
+            document.getElementById('docTitleLabel').innerText = "SERAH TERIMA BUDGET";
+            
+            if(outLabelTtd2) outLabelTtd2.innerText = "Diambil Oleh,";
+            if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa Oleh,";
+            if(outLabelTtd4) outLabelTtd4.innerText = "Diketahui Oleh,";
+            
         } else {
             table.classList.remove('comex-mode');
+            table.classList.remove('table-budget-mode');
+            sigTable.classList.remove('sig-budget-mode');
             document.getElementById('docTitleLabel').innerText = "SURAT JALAN KELUAR";
+            
+            if(outLabelTtd2) outLabelTtd2.innerText = "Diketahui oleh,";
+            if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa oleh,";
+            if(outLabelTtd4) outLabelTtd4.innerText = "Dibawa oleh,";
         }
 
         // Susun Data Tabel Material
@@ -672,16 +880,16 @@
                 outTbody.innerHTML += `<tr>
                     <td class="col-num">${index + 1}</td>
                     <td class="col-std">${i[0].value || ''}</td>
-                    <td class="col-desc">${i[1].value || ''}</td>
+                    <td class="col-desc col-hide-budget">${i[1].value || ''}</td>
                     <td class="col-std">${i[2].value || ''}</td>
                     <td class="col-comex">${i[3].value || ''}</td>
                     <td class="col-comex">${i[4].value || ''}</td>
                     <td class="col-std">${i[5].value || ''}</td>
                     <td class="col-std">${i[6].value || ''}</td>
-                    <td class="col-std">${i[7].value || ''}</td>
+                    <td class="col-std col-hide-budget">${i[7].value || ''}</td>
                     <td class="col-comex">${i[8].value || ''}</td>
                     <td class="col-comex">${i[9].value || ''}</td>
-                    <td class="col-std">${i[10].value || ''}</td>
+                    <td class="col-std col-hide-budget">${i[10].value || ''}</td>
                 </tr>`;
             }
         });
@@ -728,7 +936,6 @@
 
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
             
-            // Mengambil Orientasi Dari Pilihan Pengguna (Dropdown)
             const orientation = document.getElementById('pageOrientation').value;
             const pdfOrientation = orientation === 'landscape' ? 'l' : 'p';
             
@@ -789,20 +996,20 @@
                 images: docsPhotos
             })
         }).then(() => {
-            // Auto Increment Nomor Surat Jalan
             const d = new Date(tanggal);
             const pad = (n) => n.toString().padStart(2, '0');
             const dateStr = `${pad(d.getDate())}${pad(d.getMonth()+1)}${d.getFullYear().toString().slice(-2)}`;
             
             let storedData = JSON.parse(localStorage.getItem('bss_surat_seq'));
             let currentSeq = 1;
-            
-            if (storedData && storedData.date === dateStr) { currentSeq = storedData.seq; }
+            if (storedData && storedData.date === dateStr) {
+                currentSeq = storedData.seq;
+            }
             
             let nextSeq = currentSeq + 1;
             localStorage.setItem('bss_surat_seq', JSON.stringify({ date: dateStr, seq: nextSeq }));
-            syncNoSurat();
-
+            
+            syncNoSurat(); 
             showAlert("Sukses", "Data disimpan! Urutan nomor surat telah ditingkatkan otomatis."); 
             btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
         }).catch(err => {
