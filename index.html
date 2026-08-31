@@ -61,8 +61,7 @@
         .col-comex { width: 8%; display: none; }
         .comex-mode .col-comex { display: table-cell; }
 
-        /* Mode Budget CSS (Menyembunyikan Kolom & Formasi 4 TTD) */
-        .table-budget-mode .col-hide-budget { display: none !important; }
+        /* Mode Budget CSS (Formasi 4 TTD) */
         .sig-budget-mode td { width: 25% !important; }
         .sig-budget-mode .sig-col-5 { display: none !important; }
 
@@ -71,11 +70,11 @@
         .lampiran-title { font-weight: bold; font-size: 11px; margin-bottom: 6px; text-decoration: underline; }
         .lampiran-img { width: 23%; height: 150px; object-fit: contain; margin: 3px; border: 1px solid #ccc; display: inline-block; background: #fff; }
 
-        /* Tabel Tanda Tangan Tingkat Lanjut (Sejajar Sempurna - 4 Baris) */
+        /* Tabel Tanda Tangan Tingkat Lanjut (Sejajar Sempurna) */
         .signature-table { width: 100%; border-collapse: collapse; margin-top: 15px; page-break-inside: avoid; text-align: center; font-size: 10px; }
         .signature-table td { width: 20%; border: 1px solid #000; padding: 4px; vertical-align: top; }
         .sig-title-row td { font-weight: normal; padding-top: 5px; }
-        .sig-space-row td { height: 75px; border-bottom: none; position: relative; } /* Ruang Kosong Stempel */
+        .sig-space-row td { height: 75px; border-bottom: none; position: relative; } 
         .sig-name-row td { border-top: none; padding-bottom: 2px; }
         .sig-phone-row td { border-top: none; padding-top: 0; padding-bottom: 5px; }
         
@@ -159,7 +158,6 @@
         </div>
     </div>
 
-    <!-- Info Dokumen -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Informasi Dokumen</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -169,7 +167,7 @@
             </div>
             <div class="lg:col-span-2">
                 <label class="block text-sm font-semibold mb-1">Nomor Surat Jalan</label>
-                <input type="text" id="inNoSurat" readonly class="w-full p-2 border rounded bg-gray-200 text-gray-700 font-bold cursor-not-allowed text-center" title="Nomor dibuat otomatis berdasarkan urutan sistem">
+                <input type="text" id="inNoSurat" readonly class="w-full p-2 border rounded bg-gray-200 text-gray-700 font-bold cursor-not-allowed text-center" title="Nomor dibuat otomatis">
             </div>
             <div>
                 <label class="block text-sm font-semibold mb-1">No. STO / PO</label>
@@ -197,7 +195,6 @@
         </div>
     </div>
 
-    <!-- Input Data Penandatangan -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6 border-l-4 border-indigo-500">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Informasi Penandatangan (Signers)</h2>
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="signer-grid">
@@ -233,23 +230,22 @@
         </div>
     </div>
 
-    <!-- Tabel Material -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6 overflow-x-auto">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Daftar Material</h2>
         <table class="w-full text-sm text-center border" id="inputTableMaterial">
             <thead class="bg-gray-100 border-b">
                 <tr>
                     <th class="p-2 border text-center align-middle">Material</th>
-                    <th class="p-2 border text-center align-middle col-hide-budget">Material Description</th>
-                    <th class="p-2 border text-center align-middle">Mfr Part Number</th>
+                    <th class="p-2 border text-center align-middle" id="inThDesc">Material Description</th>
+                    <th class="p-2 border text-center align-middle" id="inThPart">Mfr Part Number</th>
                     <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">SN Module</th>
                     <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">Eks Unit</th>
-                    <th class="p-2 border text-center align-middle w-20">Qty</th>
+                    <th class="p-2 border text-center align-middle w-20" id="inThQty">Qty</th>
                     <th class="p-2 border text-center align-middle w-24">Uom</th>
-                    <th class="p-2 border text-center align-middle col-hide-budget">Batch</th>
+                    <th class="p-2 border text-center align-middle" id="inThBatch">Batch</th>
                     <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">No. WO</th>
                     <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">No. MO Reff</th>
-                    <th class="p-2 border text-center align-middle col-hide-budget" id="inputHeaderRemarks">Remarks</th>
+                    <th class="p-2 border text-center align-middle" id="inThRemarks">Remarks</th>
                     <th class="p-2 border text-center align-middle">Aksi</th>
                 </tr>
             </thead>
@@ -264,7 +260,6 @@
         </div>
     </div>
 
-    <!-- Upload Foto Barang -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Upload Dokumentasi / Foto Barang</h2>
         <div class="flex flex-wrap gap-4 mb-4">
@@ -342,16 +337,16 @@
                     <tr>
                         <th class="col-num">No</th>
                         <th class="col-std">Material</th>
-                        <th class="col-desc col-hide-budget">Material description</th>
-                        <th class="col-std">Mfr Part Number</th>
+                        <th class="col-desc" id="outThDesc">Material description</th>
+                        <th class="col-std" id="outThPart">Mfr Part Number</th>
                         <th class="col-comex">SN Module</th>
                         <th class="col-comex">Eks Unit</th>
-                        <th class="col-std" style="width: 5%;">Qty</th>
+                        <th class="col-std" style="width: 5%;" id="outThQty">Qty</th>
                         <th class="col-std" style="width: 5%;">Uom</th>
-                        <th class="col-std col-hide-budget" style="width: 8%;">Batch</th>
+                        <th class="col-std" style="width: 8%;" id="outThBatch">Batch</th>
                         <th class="col-comex">No. WO</th>
                         <th class="col-comex">No. MO Reff</th>
-                        <th class="col-std col-hide-budget" id="previewHeaderRemarks">Remarks</th>
+                        <th class="col-std" id="outThRemarks">Remarks</th>
                     </tr>
                 </thead>
                 <tbody id="outTbody"></tbody>
@@ -363,7 +358,7 @@
                 <div id="lampiranImages" style="text-align:center;"></div>
             </div>
 
-            <!-- Tabel Tanda Tangan (Sejajar Sempurna 4/5 Baris Tergantung Mode) -->
+            <!-- Tabel Tanda Tangan (Sejajar Sempurna) -->
             <table class="signature-table" id="previewSignatureTable">
                 <tr class="sig-title-row">
                     <td>Dibuat oleh,</td>
@@ -466,7 +461,8 @@
         let tbody = document.getElementById('inputTbody');
         let startRowIndex = Array.from(tbody.children).indexOf(startRowTr);
         
-        let visibleInputsInStartRow = Array.from(startRowTr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden') && !inp.closest('td').classList.contains('col-hide-budget'));
+        // Hapus filter col-hide-budget agar semua kolom yang terlihat bisa di-paste
+        let visibleInputsInStartRow = Array.from(startRowTr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden'));
         let startColIndex = visibleInputsInStartRow.indexOf(activeInput);
         
         if (startColIndex === -1) return;
@@ -476,7 +472,7 @@
         for (let i = 0; i < rows.length; i++) {
             let cols = rows[i].split('\t');
             let tr = tbody.children[startRowIndex + i];
-            let visibleInputs = Array.from(tr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden') && !inp.closest('td').classList.contains('col-hide-budget'));
+            let visibleInputs = Array.from(tr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden'));
             
             for (let j = 0; j < cols.length; j++) {
                 let targetColIndex = startColIndex + j;
@@ -550,29 +546,41 @@
     function toggleComexMode() {
         const mode = document.getElementById('docMode').value;
         const comexCols = document.querySelectorAll('.col-input-comex');
-        const inputTable = document.getElementById('inputTableMaterial');
+        const sigTable = document.getElementById('previewSignatureTable');
         const signerGrid = document.getElementById('signer-grid');
         const sigCol5Inputs = document.getElementById('signer5-container');
+        
         const ttd2Label = document.getElementById('label-ttd2');
         const ttd3Label = document.getElementById('label-ttd3');
         const ttd4Label = document.getElementById('label-ttd4');
         const ttd4Phone = document.getElementById('inTtd4Phone');
         
-        // Elemen Cap dan Stempel
         const wrapApproveAtasan = document.getElementById('wrap-approve-atasan');
         const outApproveAtasanStamp = document.getElementById('outApproveAtasanStamp');
         const containerTtd2 = document.getElementById('inTtd2').parentElement;
         const containerTtd4 = document.getElementById('inTtd4').parentElement;
         const sigSpaceRow = document.querySelector('.sig-space-row');
         
-        // Element pembungkus Dikirim Ke & Cost Center
         const wrapKe = document.getElementById('wrap-ke');
         const wrapCostCenter = document.getElementById('wrap-cost-center');
         const rowOutCostCenter = document.getElementById('row-out-cost-center');
         
+        // Element Header Tabel (Untuk diganti namanya dinamis)
+        const inThDesc = document.getElementById('inThDesc');
+        const inThPart = document.getElementById('inThPart');
+        const inThQty = document.getElementById('inThQty');
+        const inThBatch = document.getElementById('inThBatch');
+        const inThRemarks = document.getElementById('inThRemarks');
+        
+        const outThDesc = document.getElementById('outThDesc');
+        const outThPart = document.getElementById('outThPart');
+        const outThQty = document.getElementById('outThQty');
+        const outThBatch = document.getElementById('outThBatch');
+        const outThRemarks = document.getElementById('outThRemarks');
+
         if (mode === 'comex') {
             comexCols.forEach(el => el.classList.remove('hidden'));
-            inputTable.classList.remove('table-budget-mode');
+            sigTable.classList.remove('sig-budget-mode');
             
             document.getElementById('pageOrientation').value = 'landscape';
             
@@ -580,21 +588,24 @@
             signerGrid.classList.add('md:grid-cols-5');
             sigCol5Inputs.style.display = 'block';
             
-            document.getElementById('inputHeaderRemarks').innerText = "Remarks";
-            document.getElementById('previewHeaderRemarks').innerText = "Remarks";
+            // Nama Kolom Kembali Standard
+            inThDesc.innerText = "Material Description"; outThDesc.innerText = "Material description";
+            inThPart.innerText = "Mfr Part Number"; outThPart.innerText = "Mfr Part Number";
+            inThQty.innerText = "Qty"; outThQty.innerText = "Qty";
+            inThBatch.innerText = "Batch"; outThBatch.innerText = "Batch";
+            inThRemarks.innerText = "Remarks"; outThRemarks.innerText = "Remarks";
             
             ttd2Label.innerText = "Diketahui oleh";
             ttd3Label.innerText = "Diperiksa oleh";
             ttd4Label.innerText = "Dibawa oleh";
             ttd4Phone.style.display = 'block';
+            
             if (document.getElementById('inTtd2').value === 'User') document.getElementById('inTtd2').value = 'Atasan Langsung';
             if (document.getElementById('inTtd4').value === 'Staff Logistik') document.getElementById('inTtd4').value = 'Delivery';
             
-            // Kembalikan Cap ke TTD 2
             if (wrapApproveAtasan && containerTtd2) containerTtd2.appendChild(wrapApproveAtasan);
             if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[1].appendChild(outApproveAtasanStamp);
             
-            // Kembalikan Form Dikirim Ke menjadi Ketikan Teks & Sembunyikan Cost Center
             wrapCostCenter.classList.add('hidden');
             rowOutCostCenter.style.display = 'none';
             if (wrapKe && !wrapKe.querySelector('input')) {
@@ -603,7 +614,7 @@
             
         } else if (mode === 'budget') {
             comexCols.forEach(el => el.classList.add('hidden'));
-            inputTable.classList.add('table-budget-mode');
+            sigTable.classList.add('sig-budget-mode');
             
             document.getElementById('pageOrientation').value = 'portrait';
             
@@ -611,21 +622,24 @@
             signerGrid.classList.add('md:grid-cols-4');
             sigCol5Inputs.style.display = 'none';
             
-            document.getElementById('inputHeaderRemarks').innerText = "Serah Terima Reservasi";
-            document.getElementById('previewHeaderRemarks').innerText = "Serah Terima Reservasi";
+            // Perubahan Nama Kolom Khusus Budget
+            inThDesc.innerText = "PR Short Text"; outThDesc.innerText = "PR Short Text";
+            inThPart.innerText = "MPN"; outThPart.innerText = "MPN";
+            inThQty.innerText = "Qty"; outThQty.innerText = "Qty";
+            inThBatch.innerText = "Requestor"; outThBatch.innerText = "Requestor";
+            inThRemarks.innerText = "Tracking No."; outThRemarks.innerText = "Tracking No.";
             
             ttd2Label.innerText = "Diambil Oleh";
             ttd3Label.innerText = "Diperiksa Oleh";
             ttd4Label.innerText = "Diketahui Oleh";
             ttd4Phone.style.display = 'none';
+            
             document.getElementById('inTtd2').value = "User";
             document.getElementById('inTtd4').value = "Staff Logistik";
             
-            // Pindahkan Cap ke TTD 4 (Diketahui Oleh)
             if (wrapApproveAtasan && containerTtd4) containerTtd4.appendChild(wrapApproveAtasan);
             if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[3].appendChild(outApproveAtasanStamp);
             
-            // Ubah Form Dikirim Ke menjadi Dropdown & Munculkan Cost Center
             wrapCostCenter.classList.remove('hidden');
             rowOutCostCenter.style.display = 'table-row';
             if (wrapKe && !wrapKe.querySelector('select')) {
@@ -647,12 +661,13 @@
                     <option value="MBL SHE">MBL SHE</option>
                     <option value="MBL Operation">MBL Operation</option>
                 </select>`;
-                updateCostCenter(); // Load initial value
+                updateCostCenter();
             }
             
         } else {
+            // Logistik Standar
             comexCols.forEach(el => el.classList.add('hidden'));
-            inputTable.classList.remove('table-budget-mode');
+            sigTable.classList.remove('sig-budget-mode');
             
             document.getElementById('pageOrientation').value = 'portrait';
             
@@ -660,21 +675,24 @@
             signerGrid.classList.add('md:grid-cols-5');
             sigCol5Inputs.style.display = 'block';
             
-            document.getElementById('inputHeaderRemarks').innerText = "Remarks";
-            document.getElementById('previewHeaderRemarks').innerText = "Remarks";
+            // Nama Kolom Kembali Standard
+            inThDesc.innerText = "Material Description"; outThDesc.innerText = "Material description";
+            inThPart.innerText = "Mfr Part Number"; outThPart.innerText = "Mfr Part Number";
+            inThQty.innerText = "Qty"; outThQty.innerText = "Qty";
+            inThBatch.innerText = "Batch"; outThBatch.innerText = "Batch";
+            inThRemarks.innerText = "Remarks"; outThRemarks.innerText = "Remarks";
             
             ttd2Label.innerText = "Diketahui oleh";
             ttd3Label.innerText = "Diperiksa oleh";
             ttd4Label.innerText = "Dibawa oleh";
             ttd4Phone.style.display = 'block';
+            
             if (document.getElementById('inTtd2').value === 'User') document.getElementById('inTtd2').value = 'Atasan Langsung';
             if (document.getElementById('inTtd4').value === 'Staff Logistik') document.getElementById('inTtd4').value = 'Delivery';
             
-            // Kembalikan Cap ke TTD 2
             if (wrapApproveAtasan && containerTtd2) containerTtd2.appendChild(wrapApproveAtasan);
             if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[1].appendChild(outApproveAtasanStamp);
             
-            // Kembalikan Form Dikirim Ke menjadi Ketikan Teks & Sembunyikan Cost Center
             wrapCostCenter.classList.add('hidden');
             rowOutCostCenter.style.display = 'none';
             if (wrapKe && !wrapKe.querySelector('input')) {
@@ -732,20 +750,20 @@
     function addRow() {
         const tbody = document.getElementById('inputTbody');
         const mode = document.getElementById('docMode').value;
-        const isBudget = mode === 'budget';
         const tr = document.createElement('tr');
+        // Tidak ada lagi col-hide-budget. Kolom ke-2 (desc), ke-8 (batch), ke-11 (remarks) dimanfaatkan untuk teks pengganti.
         tr.innerHTML = `
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="material"></td>
-            <td class="p-1 border text-center align-middle col-hide-budget"><input type="text" class="w-full p-1 border rounded text-center" name="desc"></td>
+            <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="desc"></td>
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="part"></td>
             <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="sn"></td>
             <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="eks"></td>
             <td class="p-1 border text-center align-middle"><input type="number" class="w-full p-1 border rounded text-center" name="qty"></td>
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="uom"></td>
-            <td class="p-1 border text-center align-middle col-hide-budget"><input type="text" class="w-full p-1 border rounded text-center" name="batch"></td>
+            <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="batch"></td>
             <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="wo"></td>
             <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="mo"></td>
-            <td class="p-1 border text-center align-middle col-hide-budget"><input type="text" class="w-full p-1 border rounded text-center" name="remarks"></td>
+            <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="remarks"></td>
             <td class="p-1 border text-center align-middle"><button onclick="this.closest('tr').remove()" class="bg-red-500 text-white px-2 py-1 rounded font-bold">X</button></td>
         `;
         tbody.appendChild(tr);
@@ -833,39 +851,25 @@
 
         const mode = document.getElementById('docMode').value;
         const table = document.getElementById('previewTable');
-        const sigTable = document.getElementById('previewSignatureTable');
-        
         const outLabelTtd2 = document.getElementById('outLabelTtd2');
         const outLabelTtd3 = document.getElementById('outLabelTtd3');
         const outLabelTtd4 = document.getElementById('outLabelTtd4');
 
-        // Pengaturan Judul & Tampilan Mode
         if (mode === 'comex') {
             table.classList.add('comex-mode');
-            table.classList.remove('table-budget-mode');
-            sigTable.classList.remove('sig-budget-mode');
             document.getElementById('docTitleLabel').innerText = "SURAT JALAN COMEX";
-            
             if(outLabelTtd2) outLabelTtd2.innerText = "Diketahui oleh,";
             if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa oleh,";
             if(outLabelTtd4) outLabelTtd4.innerText = "Dibawa oleh,";
-            
         } else if (mode === 'budget') {
             table.classList.remove('comex-mode');
-            table.classList.add('table-budget-mode');
-            sigTable.classList.add('sig-budget-mode');
             document.getElementById('docTitleLabel').innerText = "SERAH TERIMA BUDGET";
-            
             if(outLabelTtd2) outLabelTtd2.innerText = "Diambil Oleh,";
             if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa Oleh,";
             if(outLabelTtd4) outLabelTtd4.innerText = "Diketahui Oleh,";
-            
         } else {
             table.classList.remove('comex-mode');
-            table.classList.remove('table-budget-mode');
-            sigTable.classList.remove('sig-budget-mode');
             document.getElementById('docTitleLabel').innerText = "SURAT JALAN KELUAR";
-            
             if(outLabelTtd2) outLabelTtd2.innerText = "Diketahui oleh,";
             if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa oleh,";
             if(outLabelTtd4) outLabelTtd4.innerText = "Dibawa oleh,";
@@ -880,16 +884,16 @@
                 outTbody.innerHTML += `<tr>
                     <td class="col-num">${index + 1}</td>
                     <td class="col-std">${i[0].value || ''}</td>
-                    <td class="col-desc col-hide-budget">${i[1].value || ''}</td>
+                    <td class="col-desc">${i[1].value || ''}</td>
                     <td class="col-std">${i[2].value || ''}</td>
                     <td class="col-comex">${i[3].value || ''}</td>
                     <td class="col-comex">${i[4].value || ''}</td>
                     <td class="col-std">${i[5].value || ''}</td>
                     <td class="col-std">${i[6].value || ''}</td>
-                    <td class="col-std col-hide-budget">${i[7].value || ''}</td>
+                    <td class="col-std">${i[7].value || ''}</td>
                     <td class="col-comex">${i[8].value || ''}</td>
                     <td class="col-comex">${i[9].value || ''}</td>
-                    <td class="col-std col-hide-budget">${i[10].value || ''}</td>
+                    <td class="col-std">${i[10].value || ''}</td>
                 </tr>`;
             }
         });
