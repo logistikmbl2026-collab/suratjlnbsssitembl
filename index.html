@@ -40,7 +40,7 @@
 
         .info-text { font-size: 11px; margin-bottom: 8px; line-height: 1.4; }
         
-        /* Tabel Material Utama (Dipaksa Rata Tengah Horizontal & Vertikal) */
+        /* Tabel Material Utama */
         .pdf-table { width: 100%; border-collapse: collapse; table-layout: fixed; word-wrap: break-word; margin-top: 5px; }
         .pdf-table th, .pdf-table td { 
             border: 1px solid #000 !important; 
@@ -70,7 +70,7 @@
         .lampiran-title { font-weight: bold; font-size: 11px; margin-bottom: 6px; text-decoration: underline; }
         .lampiran-img { width: 23%; height: 150px; object-fit: contain; margin: 3px; border: 1px solid #ccc; display: inline-block; background: #fff; }
 
-        /* Tabel Tanda Tangan Tingkat Lanjut (Sejajar Sempurna) */
+        /* Tabel Tanda Tangan */
         .signature-table { width: 100%; border-collapse: collapse; margin-top: 15px; page-break-inside: avoid; text-align: center; font-size: 10px; }
         .signature-table td { width: 20%; border: 1px solid #000; padding: 4px; vertical-align: top; }
         .sig-title-row td { font-weight: normal; padding-top: 5px; }
@@ -84,7 +84,7 @@
 
         .footer-text { font-size: 8px; margin-top: 10px; text-align: left; line-height: 1.2; }
 
-        /* Custom Notifikasi Alert */
+        /* Custom Notifikasi & Konfirmasi Modal */
         .alert-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; }
         .alert-box { background: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .alert-box h3 { margin-top: 0; font-size: 18px; font-weight: bold; }
@@ -99,7 +99,6 @@
         }
     </style>
     
-    <!-- Tag Style Khusus untuk Mengatur Orientasi Kertas Saat Diprint (Dinamis) -->
     <style id="page-orientation-style">
         @page { size: portrait; margin: 0mm; }
     </style>
@@ -111,25 +110,28 @@
         <h1 class="text-2xl font-bold">Surat Jalan Logistik & Comex</h1>
         <p id="topDateDisplay" class="text-blue-200 text-sm mt-1"></p>
     </div>
-    <div class="flex space-x-2 mt-2 sm:mt-0">
-        <button onclick="switchTab('input')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">📝 Input Data</button>
-        <button onclick="switchTab('preview')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">📄 Preview & Cetak</button>
-        <button onclick="switchTab('validasi')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">📂 Upload Validasi</button>
+    <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
+        <button onclick="switchTab('input')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition text-sm sm:text-base">📝 Input Data</button>
+        <button onclick="switchTab('preview')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition text-sm sm:text-base">📄 Preview & Cetak</button>
+        <button onclick="switchTab('validasi')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition text-sm sm:text-base">📂 Upload Validasi</button>
+        <button onclick="switchTab('log')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition text-sm sm:text-base font-bold text-yellow-300">🕒 Log Aktivitas</button>
     </div>
 </div>
 
+<!-- Custom Alert / Modal Dialog -->
 <div id="customAlert" class="alert-overlay">
     <div class="alert-box">
         <h3 id="alertTitle">Notifikasi</h3>
-        <p id="alertMessage"></p>
-        <button onclick="closeAlert()">Tutup</button>
+        <p id="alertMessage" class="mt-2 text-gray-600"></p>
+        <div id="alertButtons" class="mt-4 flex justify-center gap-2">
+            <button onclick="closeAlert()" id="alertOkBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded font-semibold">Tutup</button>
+        </div>
     </div>
 </div>
 
 <!-- ======================= TAB 1: INPUT DATA ======================= -->
 <div id="tab-input" class="p-6 w-full mx-auto">
 
-    <!-- Teks Bergerak (Motivasi Kerja) -->
     <div class="bg-yellow-100 border-l-4 border-yellow-500 p-3 mb-6 rounded shadow-sm flex items-center">
         <span class="mr-3 text-xl">💡</span>
         <marquee behavior="scroll" direction="left" scrollamount="6" class="font-bold text-yellow-800 text-sm md:text-base tracking-wide">
@@ -177,7 +179,8 @@
                 <label class="block text-sm font-semibold mb-1">No. GI</label>
                 <input type="text" id="inNoGI" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
-            <div></div> <!-- Spacer -->
+            <div></div>
+            
             <div class="lg:col-span-3">
                 <label class="block text-sm font-semibold mb-1">Dikirim Dari</label>
                 <input type="text" id="inDari" value="BSS" class="w-full p-2 border rounded focus:ring-blue-500">
@@ -235,7 +238,7 @@
         <table class="w-full text-sm text-center border" id="inputTableMaterial">
             <thead class="bg-gray-100 border-b">
                 <tr>
-                    <th class="p-2 border text-center align-middle">Material</th>
+                    <th class="p-2 border text-center align-middle" id="inThMat">Material</th>
                     <th class="p-2 border text-center align-middle" id="inThDesc">Material Description</th>
                     <th class="p-2 border text-center align-middle" id="inThPart">Mfr Part Number</th>
                     <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">SN Module</th>
@@ -292,7 +295,8 @@
 
     <div class="w-full overflow-x-auto shadow-2xl pb-4 flex justify-center" id="print-wrapper">
         <div class="a4-container bg-white" id="pdfArea">
-            <table class="pdf-header-table">
+            
+            <table class="pdf-header-table" style="position:relative; z-index:10;">
                 <tr>
                     <td rowspan="2" style="width: 18%; text-align: center; vertical-align: middle;">
                         <img src="https://i.postimg.cc/mDzgfsdH/PT-BINA-SARANA-SUKSES.jpg" crossorigin="anonymous" style="width: 100%; max-height: 55px; object-fit: contain; margin: 0 auto;">
@@ -314,9 +318,9 @@
                 </tr>
             </table>
 
-            <div style="text-align: center; font-size: 14px; font-weight: bold; margin: 10px 0; text-decoration: underline;" id="docTitleLabel">SURAT JALAN KELUAR</div>
+            <div style="text-align: center; font-size: 14px; font-weight: bold; margin: 10px 0; text-decoration: underline; position:relative; z-index:10;" id="docTitleLabel">SURAT JALAN KELUAR</div>
 
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:10;">
                 <div class="info-text">
                     <table>
                         <tr><td style="width:65px;">Tanggal</td><td>: <span id="outTanggal"></span></td></tr>
@@ -332,11 +336,11 @@
                 </div>
             </div>
 
-            <table class="pdf-table" id="previewTable">
+            <table class="pdf-table" id="previewTable" style="position:relative; z-index:10;">
                 <thead>
                     <tr>
                         <th class="col-num">No</th>
-                        <th class="col-std">Material</th>
+                        <th class="col-std" id="outThMat">Material</th>
                         <th class="col-desc" id="outThDesc">Material description</th>
                         <th class="col-std" id="outThPart">Mfr Part Number</th>
                         <th class="col-comex">SN Module</th>
@@ -352,14 +356,12 @@
                 <tbody id="outTbody"></tbody>
             </table>
 
-            <!-- Lampiran Foto -->
-            <div id="previewLampiran" class="lampiran-box hidden">
+            <div id="previewLampiran" class="lampiran-box hidden" style="position:relative; z-index:10;">
                 <div class="lampiran-title">LAMPIRAN DOKUMENTASI PENGIRIMAN</div>
                 <div id="lampiranImages" style="text-align:center;"></div>
             </div>
 
-            <!-- Tabel Tanda Tangan (Sejajar Sempurna) -->
-            <table class="signature-table" id="previewSignatureTable">
+            <table class="signature-table" id="previewSignatureTable" style="position:relative; z-index:10;">
                 <tr class="sig-title-row">
                     <td>Dibuat oleh,</td>
                     <td id="outLabelTtd2">Diketahui oleh,</td>
@@ -390,7 +392,7 @@
                 </tr>
             </table>
 
-            <div class="footer-text">
+            <div class="footer-text" style="position:relative; z-index:10;">
                 Head Office : Landmark Pluit, Jalan Pluit Selatan Raya, Komplek Perkantoran, Landmark Pluit D, No. 17, Pluit, Penjaringan, Jakarta Utara - DKI Jakarta<br>
                 Telepon : 021 - 22677447
             </div>
@@ -441,11 +443,45 @@
     </div>
 </div>
 
+<!-- ======================= TAB 4: LOG AKTIVITAS ======================= -->
+<div id="tab-log" class="p-6 hidden w-full mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-yellow-400">
+        <div class="flex flex-col md:flex-row justify-between items-center border-b pb-4 mb-4 gap-4">
+            <h2 class="text-2xl font-bold text-gray-800">Riwayat Dokumen Tersimpan (Log Aktivitas)</h2>
+            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                <input type="text" id="searchLogInput" onkeyup="filterHistoryLog()" placeholder="🔍 Cari No Surat / Tujuan..." class="p-2 border rounded text-sm w-full md:w-64">
+                <button onclick="confirmClearAllLog()" class="bg-red-500 text-white px-3 py-1.5 rounded hover:bg-red-600 text-sm font-bold shadow-sm whitespace-nowrap">🗑️ Hapus Semua</button>
+            </div>
+        </div>
+        
+        <p class="text-sm text-gray-600 mb-4">Daftar dokumen di bawah ini tersimpan secara permanen di perangkat Anda. Anda dapat mencetak ulang atau menghapus riwayat tertentu sewaktu-waktu.</p>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse bg-gray-50 rounded-lg shadow-sm">
+                <thead>
+                    <tr class="bg-blue-600 text-white text-sm">
+                        <th class="p-3 border">Waktu Disimpan</th>
+                        <th class="p-3 border">Nomor Surat</th>
+                        <th class="p-3 border">Jenis Form</th>
+                        <th class="p-3 border">Dikirim Ke</th>
+                        <th class="p-3 border text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTbody" class="text-sm text-gray-700">
+                    <!-- Data log masuk ke sini -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyjgMsVXLhGEjYLTxVSyOZ8eTHFsL8VAoFecR_OOG-hz33iScBVd0vIT5CMbCjXl0c-/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbymqrxnOcZWJKti01za1Z9FOLCPPPJg4hdp6nibpJunxAmDHrtClfOCMT5oPL1MPy_Z/exec';
+    
     let docsPhotos = []; 
     let validasiFileBase64 = "";
     let validasiMimeType = "";
+    let confirmCallback = null;
     
     // Fitur Paste Dari Excel
     document.getElementById('inputTbody').addEventListener('paste', function(e) {
@@ -461,7 +497,6 @@
         let tbody = document.getElementById('inputTbody');
         let startRowIndex = Array.from(tbody.children).indexOf(startRowTr);
         
-        // Hapus filter col-hide-budget agar semua kolom yang terlihat bisa di-paste
         let visibleInputsInStartRow = Array.from(startRowTr.querySelectorAll('input')).filter(inp => !inp.closest('td').classList.contains('hidden'));
         let startColIndex = visibleInputsInStartRow.indexOf(activeInput);
         
@@ -498,13 +533,35 @@
         document.getElementById('topDateDisplay').innerText = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
     }
 
-    function showAlert(title, message) {
+    function showAlert(title, message, callback = null) {
         document.getElementById('alertTitle').innerText = title;
         document.getElementById('alertMessage').innerText = message;
+        confirmCallback = callback;
+        
+        const btnContainer = document.getElementById('alertButtons');
+        if (callback) {
+            btnContainer.innerHTML = `
+                <button onclick="handleModalConfirm(true)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold">Ya, Lanjutkan</button>
+                <button onclick="handleModalConfirm(false)" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded font-semibold">Batal</button>
+            `;
+        } else {
+            btnContainer.innerHTML = `<button onclick="closeAlert()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded font-semibold">Tutup</button>`;
+        }
         document.getElementById('customAlert').style.display = 'flex';
     }
     
-    function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
+    function closeAlert() { 
+        document.getElementById('customAlert').style.display = 'none'; 
+        confirmCallback = null;
+    }
+
+    function handleModalConfirm(result) {
+        const cb = confirmCallback;
+        closeAlert();
+        if (result && typeof cb === 'function') {
+            cb();
+        }
+    }
 
     const costCenterMap = {
         "MBL Gen Cost": "A440010000",
@@ -528,19 +585,20 @@
     function updateCostCenter() {
         const keEl = document.getElementById('inKe');
         const ccEl = document.getElementById('inCostCenter');
-        if (keEl && keEl.tagName === 'SELECT') {
+        if (keEl && keEl.tagName === 'SELECT' && ccEl) {
             ccEl.value = costCenterMap[keEl.value] || '';
         }
     }
 
     function switchTab(tabId) {
-        ['input', 'preview', 'validasi'].forEach(id => {
+        ['input', 'preview', 'validasi', 'log'].forEach(id => {
             document.getElementById('tab-' + id).classList.add('hidden');
         });
         document.getElementById('tab-' + tabId).classList.remove('hidden');
 
         if(tabId === 'preview') buildPreview();
         if(tabId === 'validasi') syncNoSurat();
+        if(tabId === 'log') loadHistoryLog();
     }
 
     function toggleComexMode() {
@@ -565,13 +623,14 @@
         const wrapCostCenter = document.getElementById('wrap-cost-center');
         const rowOutCostCenter = document.getElementById('row-out-cost-center');
         
-        // Element Header Tabel (Untuk diganti namanya dinamis)
+        const inThMat = document.getElementById('inThMat');
         const inThDesc = document.getElementById('inThDesc');
         const inThPart = document.getElementById('inThPart');
         const inThQty = document.getElementById('inThQty');
         const inThBatch = document.getElementById('inThBatch');
         const inThRemarks = document.getElementById('inThRemarks');
         
+        const outThMat = document.getElementById('outThMat');
         const outThDesc = document.getElementById('outThDesc');
         const outThPart = document.getElementById('outThPart');
         const outThQty = document.getElementById('outThQty');
@@ -581,14 +640,13 @@
         if (mode === 'comex') {
             comexCols.forEach(el => el.classList.remove('hidden'));
             sigTable.classList.remove('sig-budget-mode');
-            
             document.getElementById('pageOrientation').value = 'landscape';
             
             signerGrid.classList.remove('md:grid-cols-4');
             signerGrid.classList.add('md:grid-cols-5');
             sigCol5Inputs.style.display = 'block';
             
-            // Nama Kolom Kembali Standard
+            inThMat.innerText = "Material"; outThMat.innerText = "Material";
             inThDesc.innerText = "Material Description"; outThDesc.innerText = "Material description";
             inThPart.innerText = "Mfr Part Number"; outThPart.innerText = "Mfr Part Number";
             inThQty.innerText = "Qty"; outThQty.innerText = "Qty";
@@ -615,19 +673,18 @@
         } else if (mode === 'budget') {
             comexCols.forEach(el => el.classList.add('hidden'));
             sigTable.classList.add('sig-budget-mode');
-            
             document.getElementById('pageOrientation').value = 'portrait';
             
             signerGrid.classList.remove('md:grid-cols-5');
             signerGrid.classList.add('md:grid-cols-4');
             sigCol5Inputs.style.display = 'none';
             
-            // Perubahan Nama Kolom Khusus Budget
-            inThDesc.innerText = "PR Short Text"; outThDesc.innerText = "PR Short Text";
-            inThPart.innerText = "MPN"; outThPart.innerText = "MPN";
-            inThQty.innerText = "Qty"; outThQty.innerText = "Qty";
-            inThBatch.innerText = "Requestor"; outThBatch.innerText = "Requestor";
-            inThRemarks.innerText = "Tracking No."; outThRemarks.innerText = "Tracking No.";
+            inThMat.innerText = "No"; outThMat.innerText = "No";
+            inThDesc.innerText = "Material"; outThDesc.innerText = "Material";
+            inThPart.innerText = "PR Short Text"; outThPart.innerText = "PR Short Text";
+            inThQty.innerText = "MPN"; outThQty.innerText = "MPN";
+            inThBatch.innerText = "Qty"; outThBatch.innerText = "Qty";
+            inThRemarks.innerText = "Requestor"; outThRemarks.innerText = "Requestor";
             
             ttd2Label.innerText = "Diambil Oleh";
             ttd3Label.innerText = "Diperiksa Oleh";
@@ -665,17 +722,15 @@
             }
             
         } else {
-            // Logistik Standar
             comexCols.forEach(el => el.classList.add('hidden'));
             sigTable.classList.remove('sig-budget-mode');
-            
             document.getElementById('pageOrientation').value = 'portrait';
             
             signerGrid.classList.remove('md:grid-cols-4');
             signerGrid.classList.add('md:grid-cols-5');
             sigCol5Inputs.style.display = 'block';
             
-            // Nama Kolom Kembali Standard
+            inThMat.innerText = "Material"; outThMat.innerText = "Material";
             inThDesc.innerText = "Material Description"; outThDesc.innerText = "Material description";
             inThPart.innerText = "Mfr Part Number"; outThPart.innerText = "Mfr Part Number";
             inThQty.innerText = "Qty"; outThQty.innerText = "Qty";
@@ -751,7 +806,7 @@
         const tbody = document.getElementById('inputTbody');
         const mode = document.getElementById('docMode').value;
         const tr = document.createElement('tr');
-        // Tidak ada lagi col-hide-budget. Kolom ke-2 (desc), ke-8 (batch), ke-11 (remarks) dimanfaatkan untuk teks pengganti.
+        
         tr.innerHTML = `
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="material"></td>
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="desc"></td>
@@ -829,7 +884,6 @@
         document.getElementById('outSTO').innerText = document.getElementById('inNoSTO').value;
         document.getElementById('outGI').innerText = document.getElementById('inNoGI').value;
 
-        // Tanda Tangan
         document.getElementById('outTtd1').value = document.getElementById('inTtd1').value;
         document.getElementById('outTtd2').value = document.getElementById('inTtd2').value;
         document.getElementById('outTtd3').value = document.getElementById('inTtd3').value;
@@ -837,7 +891,6 @@
         document.getElementById('outTtd4Phone').value = document.getElementById('inTtd4Phone').value;
         document.getElementById('outTtd5').value = document.getElementById('inTtd5').value;
 
-        // Logika Stempel Approved
         const stamp = document.getElementById('outApproveStamp');
         const checkStamp = document.getElementById('inApproveStamp');
         if (stamp && checkStamp) { stamp.style.display = checkStamp.checked ? 'block' : 'none'; }
@@ -854,6 +907,13 @@
         const outLabelTtd2 = document.getElementById('outLabelTtd2');
         const outLabelTtd3 = document.getElementById('outLabelTtd3');
         const outLabelTtd4 = document.getElementById('outLabelTtd4');
+        
+        const outThMat = document.getElementById('outThMat');
+        const outThDesc = document.getElementById('outThDesc');
+        const outThPart = document.getElementById('outThPart');
+        const outThQty = document.getElementById('outThQty');
+        const outThBatch = document.getElementById('outThBatch');
+        const outThRemarks = document.getElementById('outThRemarks');
 
         if (mode === 'comex') {
             table.classList.add('comex-mode');
@@ -861,21 +921,32 @@
             if(outLabelTtd2) outLabelTtd2.innerText = "Diketahui oleh,";
             if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa oleh,";
             if(outLabelTtd4) outLabelTtd4.innerText = "Dibawa oleh,";
+            
+            outThMat.innerText = "Material"; outThDesc.innerText = "Material description";
+            outThPart.innerText = "Mfr Part Number"; outThQty.innerText = "Qty";
+            outThBatch.innerText = "Batch"; outThRemarks.innerText = "Remarks";
         } else if (mode === 'budget') {
             table.classList.remove('comex-mode');
             document.getElementById('docTitleLabel').innerText = "SERAH TERIMA BUDGET";
             if(outLabelTtd2) outLabelTtd2.innerText = "Diambil Oleh,";
             if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa Oleh,";
             if(outLabelTtd4) outLabelTtd4.innerText = "Diketahui Oleh,";
+            
+            outThMat.innerText = "No"; outThDesc.innerText = "Material";
+            outThPart.innerText = "PR Short Text"; outThQty.innerText = "MPN";
+            outThBatch.innerText = "Qty"; outThRemarks.innerText = "Requestor";
         } else {
             table.classList.remove('comex-mode');
             document.getElementById('docTitleLabel').innerText = "SURAT JALAN KELUAR";
             if(outLabelTtd2) outLabelTtd2.innerText = "Diketahui oleh,";
             if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa oleh,";
             if(outLabelTtd4) outLabelTtd4.innerText = "Dibawa oleh,";
+            
+            outThMat.innerText = "Material"; outThDesc.innerText = "Material description";
+            outThPart.innerText = "Mfr Part Number"; outThQty.innerText = "Qty";
+            outThBatch.innerText = "Batch"; outThRemarks.innerText = "Remarks";
         }
 
-        // Susun Data Tabel Material
         const outTbody = document.getElementById('outTbody');
         outTbody.innerHTML = '';
         document.querySelectorAll('#inputTbody tr').forEach((row, index) => {
@@ -898,7 +969,6 @@
             }
         });
 
-        // Susun Lampiran Foto
         const lampiranBox = document.getElementById('previewLampiran');
         const lampiranImgContainer = document.getElementById('lampiranImages');
         lampiranImgContainer.innerHTML = '';
@@ -979,46 +1049,208 @@
         btn.innerText = "⏳ Menyimpan data..."; btn.disabled = true;
 
         let materialsData = [];
+        let rawMaterials = []; 
+        
         document.querySelectorAll('#inputTbody tr').forEach(row => {
             const i = row.querySelectorAll('input');
-            if(i.length > 5) {
+            if(i.length >= 11 && i[0].value.trim() !== '') {
                 materialsData.push(`${i[0].value} | ${i[1].value} | Qty:${i[5].value}`);
+                rawMaterials.push({
+                    mat: i[0].value, desc: i[1].value, part: i[2].value, sn: i[3].value,
+                    eks: i[4].value, qty: i[5].value, uom: i[6].value, batch: i[7].value,
+                    wo: i[8].value, mo: i[9].value, rem: i[10].value
+                });
             }
         });
 
         const noSurat = document.getElementById('inNoSurat').value;
         const tanggal = document.getElementById('inTanggal').value;
+        
+        let costCenter = "";
+        if(document.getElementById('inCostCenter')) costCenter = document.getElementById('inCostCenter').value;
 
+        const currentDocData = {
+            mode: document.getElementById('docMode').value,
+            orientation: document.getElementById('pageOrientation').value,
+            tanggal: tanggal, noSurat: noSurat,
+            noSTO: document.getElementById('inNoSTO').value, 
+            noGI: document.getElementById('inNoGI').value, 
+            dari: document.getElementById('inDari').value,
+            ke: document.getElementById('inKe').value, 
+            costCenter: costCenter,
+            materials: rawMaterials,
+            ttd1: document.getElementById('inTtd1').value, 
+            ttd2: document.getElementById('inTtd2').value, 
+            ttd3: document.getElementById('inTtd3').value, 
+            ttd4: document.getElementById('inTtd4').value, 
+            ttd4Phone: document.getElementById('inTtd4Phone').value, 
+            ttd5: document.getElementById('inTtd5').value,
+            appStamp: document.getElementById('inApproveStamp').checked,
+            appAtasan: document.getElementById('inApproveAtasan').checked,
+            photos: [...docsPhotos],
+            saveTime: new Date().toLocaleString('id-ID')
+        };
+
+        // Simpan langsung ke Local Storage (Log Aktivitas) agar data tidak pernah hilang
+        let history = JSON.parse(localStorage.getItem('bss_surat_history') || '[]');
+        history.unshift(currentDocData);
+        if (history.length > 50) history.pop();
+        localStorage.setItem('bss_surat_history', JSON.stringify(history));
+
+        // Kirim ke Google Apps Script
         fetch(scriptURL, {
-            method: 'POST', mode: 'no-cors', cache: 'no-cache', headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
             body: JSON.stringify({
-                action: 'save_data', tanggal: tanggal, noSurat: noSurat,
-                noSTO: document.getElementById('inNoSTO').value, noGI: document.getElementById('inNoGI').value, dari: document.getElementById('inDari').value,
-                ke: document.getElementById('inKe').value, materials: materialsData.join("\n"),
-                ttd1: document.getElementById('inTtd1').value, ttd2: document.getElementById('inTtd2').value, 
-                ttd3: document.getElementById('inTtd3').value, ttd4: document.getElementById('inTtd4').value + ' (' + document.getElementById('inTtd4Phone').value + ')', ttd5: document.getElementById('inTtd5').value,
+                action: 'save_data', 
+                tanggal: tanggal, 
+                noSurat: noSurat,
+                noSTO: currentDocData.noSTO, 
+                noGI: currentDocData.noGI, 
+                dari: currentDocData.dari,
+                ke: currentDocData.ke, 
+                costCenter: costCenter,
+                materials: materialsData.join("\n"),
+                ttd1: currentDocData.ttd1, 
+                ttd2: currentDocData.ttd2, 
+                ttd3: currentDocData.ttd3, 
+                ttd4: currentDocData.ttd4 + ' (' + currentDocData.ttd4Phone + ')', 
+                ttd5: currentDocData.ttd5,
                 images: docsPhotos
             })
-        }).then(() => {
-            const d = new Date(tanggal);
-            const pad = (n) => n.toString().padStart(2, '0');
-            const dateStr = `${pad(d.getDate())}${pad(d.getMonth()+1)}${d.getFullYear().toString().slice(-2)}`;
-            
-            let storedData = JSON.parse(localStorage.getItem('bss_surat_seq'));
-            let currentSeq = 1;
-            if (storedData && storedData.date === dateStr) {
-                currentSeq = storedData.seq;
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if(resData.status === 'success') {
+                const d = new Date(tanggal);
+                const pad = (n) => n.toString().padStart(2, '0');
+                const dateStr = `${pad(d.getDate())}${pad(d.getMonth()+1)}${d.getFullYear().toString().slice(-2)}`;
+                
+                let storedSeq = JSON.parse(localStorage.getItem('bss_surat_seq'));
+                let currentSeq = (storedSeq && storedSeq.date === dateStr) ? storedSeq.seq : 1;
+                localStorage.setItem('bss_surat_seq', JSON.stringify({ date: dateStr, seq: currentSeq + 1 }));
+
+                syncNoSurat(); 
+                showAlert("Sukses", "Data berhasil disimpan di Database Sheets & Log Aktivitas!"); 
+            } else {
+                showAlert("Perhatian", "Tersimpan di Log Aktivitas Lokal, namun respons Sheet: " + resData.message);
             }
-            
-            let nextSeq = currentSeq + 1;
-            localStorage.setItem('bss_surat_seq', JSON.stringify({ date: dateStr, seq: nextSeq }));
-            
-            syncNoSurat(); 
-            showAlert("Sukses", "Data disimpan! Urutan nomor surat telah ditingkatkan otomatis."); 
             btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
         }).catch(err => {
-            showAlert("Error", "Gagal menyimpan: " + err); btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
+            showAlert("Informasi", "Tersimpan di Log Aktivitas Lokal (Perangkat Anda). Koneksi ke Database Sheets tertunda: " + err); 
+            btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
         });
+    }
+
+    function loadHistoryLog(filter = "") {
+        const tbody = document.getElementById('historyTbody');
+        const history = JSON.parse(localStorage.getItem('bss_surat_history') || '[]');
+        tbody.innerHTML = '';
+        
+        const filtered = history.filter(doc => {
+            const query = filter.toLowerCase();
+            return (doc.noSurat && doc.noSurat.toLowerCase().includes(query)) ||
+                   (doc.ke && doc.ke.toLowerCase().includes(query)) ||
+                   (doc.mode && doc.mode.toLowerCase().includes(query));
+        });
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500 italic">Tidak ada riwayat dokumen yang ditemukan.</td></tr>`;
+            return;
+        }
+
+        filtered.forEach((doc) => {
+            // Cari index asli dari data di dalam history utama
+            const originalIndex = history.findIndex(h => h.noSurat === doc.noSurat && h.saveTime === doc.saveTime);
+            
+            const tr = document.createElement('tr');
+            tr.className = "border-b hover:bg-gray-100 transition";
+            tr.innerHTML = `
+                <td class="p-3 border font-semibold">${doc.saveTime || '-'}</td>
+                <td class="p-3 border font-bold text-blue-700">${doc.noSurat}</td>
+                <td class="p-3 border uppercase text-xs font-bold text-gray-600">${doc.mode}</td>
+                <td class="p-3 border">${doc.ke}</td>
+                <td class="p-3 border text-center flex justify-center gap-2">
+                    <button onclick="reprintHistory(${originalIndex})" class="bg-indigo-600 text-white px-3 py-1 rounded shadow hover:bg-indigo-700 font-bold text-xs transition">
+                        🖨️ Muat & Cetak
+                    </button>
+                    <button onclick="confirmDeleteLog(${originalIndex})" class="bg-red-500 text-white px-2.5 py-1 rounded shadow hover:bg-red-600 font-bold text-xs transition" title="Hapus Log Ini">
+                        🗑️
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function filterHistoryLog() {
+        const keyword = document.getElementById('searchLogInput').value;
+        loadHistoryLog(keyword);
+    }
+
+    function confirmDeleteLog(index) {
+        showAlert("Konfirmasi Hapus", "Apakah Anda yakin ingin menghapus riwayat dokumen ini?", () => {
+            let history = JSON.parse(localStorage.getItem('bss_surat_history') || '[]');
+            history.splice(index, 1);
+            localStorage.setItem('bss_surat_history', JSON.stringify(history));
+            loadHistoryLog();
+            showAlert("Berhasil", "Riwayat dokumen berhasil dihapus.");
+        });
+    }
+
+    function confirmClearAllLog() {
+        showAlert("Konfirmasi Hapus Semua", "Apakah Anda yakin ingin menghapus seluruh riwayat dokumen di perangkat ini?", () => {
+            localStorage.removeItem('bss_surat_history');
+            loadHistoryLog();
+            showAlert("Berhasil", "Semua riwayat dokumen berhasil dikosongkan.");
+        });
+    }
+
+    function reprintHistory(index) {
+        const history = JSON.parse(localStorage.getItem('bss_surat_history') || '[]');
+        const data = history[index];
+        if(!data) return;
+
+        document.getElementById('docMode').value = data.mode;
+        document.getElementById('pageOrientation').value = data.orientation || 'portrait';
+        toggleComexMode();
+
+        document.getElementById('inTanggal').value = data.tanggal;
+        document.getElementById('inNoSurat').value = data.noSurat;
+        document.getElementById('inNoSTO').value = data.noSTO || '';
+        document.getElementById('inNoGI').value = data.noGI || '';
+        document.getElementById('inDari').value = data.dari || 'BSS';
+        
+        document.getElementById('inKe').value = data.ke || '';
+        if (data.mode === 'budget') updateCostCenter(); 
+
+        document.getElementById('inTtd1').value = data.ttd1 || '';
+        document.getElementById('inTtd2').value = data.ttd2 || '';
+        document.getElementById('inTtd3').value = data.ttd3 || '';
+        document.getElementById('inTtd4').value = data.ttd4 || '';
+        document.getElementById('inTtd4Phone').value = data.ttd4Phone || '';
+        document.getElementById('inTtd5').value = data.ttd5 || '';
+        document.getElementById('inApproveStamp').checked = data.appStamp || false;
+        if(document.getElementById('inApproveAtasan')) document.getElementById('inApproveAtasan').checked = data.appAtasan || false;
+
+        const tbody = document.getElementById('inputTbody');
+        tbody.innerHTML = '';
+        if (data.materials && data.materials.length > 0) {
+            data.materials.forEach(m => {
+                addRow();
+                const lastRow = tbody.lastElementChild;
+                const i = lastRow.querySelectorAll('input');
+                i[0].value = m.mat; i[1].value = m.desc; i[2].value = m.part; i[3].value = m.sn; i[4].value = m.eks;
+                i[5].value = m.qty; i[6].value = m.uom; i[7].value = m.batch; i[8].value = m.wo; i[9].value = m.mo; i[10].value = m.rem;
+            });
+        } else {
+            addRow(); 
+        }
+
+        docsPhotos = data.photos || [];
+        renderDocsPreview();
+
+        switchTab('preview');
+        showAlert("Data Dimuat", `Dokumen ${data.noSurat} berhasil dimuat kembali ke lembar cetak!`);
     }
 
     function handleValFileSelect(event) {
@@ -1045,7 +1277,7 @@
             } else showAlert("Error", "Gagal upload: " + resData.message);
             btn.innerText = "🚀 UPLOAD KE GOOGLE DRIVE"; btn.disabled = false;
         }).catch(err => {
-            showAlert("Kesalahan", "Gagal menghubungi server.\n" + err); btn.innerText = "🚀 UPLOAD KE GOOGLE DRIVE"; btn.disabled = false;
+            showAlert("Kesalahan", "Gagal menghubungi server. Pastikan URL Script benar.\n" + err); btn.innerText = "🚀 UPLOAD KE GOOGLE DRIVE"; btn.disabled = false;
         });
     }
 
