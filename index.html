@@ -24,11 +24,14 @@
             box-sizing: border-box;
             position: relative;
         }
+
+        /* Orientasi Kertas Landscape Dinamis */
         .a4-container.landscape {
             width: 297mm;
             min-height: 210mm;
         }
 
+        /* Desain Tabel Header PT BSS */
         .pdf-header-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px; }
         .pdf-header-table td { border: 2px solid #000; padding: 4px; vertical-align: middle; }
         .pdf-header-table .doc-ctrl { font-size: 9px; width: 32%; padding: 0; }
@@ -37,6 +40,7 @@
 
         .info-text { font-size: 11px; margin-bottom: 8px; line-height: 1.4; }
         
+        /* Tabel Material Utama (Dipaksa Rata Tengah Horizontal & Vertikal) */
         .pdf-table { width: 100%; border-collapse: collapse; table-layout: fixed; word-wrap: break-word; margin-top: 5px; }
         .pdf-table th, .pdf-table td { 
             border: 1px solid #000 !important; 
@@ -51,18 +55,22 @@
         .col-desc { width: 25%; }
         .col-std { width: 9%; }
         
+        /* Lebar Kolom Dinamis Comex */
         .pdf-table.comex-mode .col-desc { width: 16%; }
         .pdf-table.comex-mode .col-std { width: 7%; }
         .col-comex { width: 8%; display: none; }
         .comex-mode .col-comex { display: table-cell; }
 
+        /* Mode Budget CSS (Formasi 4 TTD) */
         .sig-budget-mode td { width: 25% !important; }
         .sig-budget-mode .sig-col-5 { display: none !important; }
 
+        /* Kotak Lampiran Foto */
         .lampiran-box { border: 2px solid #000; border-top: none; padding: 8px; text-align: center; page-break-inside: avoid; }
         .lampiran-title { font-weight: bold; font-size: 11px; margin-bottom: 6px; text-decoration: underline; }
         .lampiran-img { width: 23%; height: 150px; object-fit: contain; margin: 3px; border: 1px solid #ccc; display: inline-block; background: #fff; }
 
+        /* Tabel Tanda Tangan Tingkat Lanjut (Sejajar Sempurna) */
         .signature-table { width: 100%; border-collapse: collapse; margin-top: 15px; page-break-inside: avoid; text-align: center; font-size: 10px; }
         .signature-table td { width: 20%; border: 1px solid #000; padding: 4px; vertical-align: top; }
         .sig-title-row td { font-weight: normal; padding-top: 5px; }
@@ -73,13 +81,16 @@
         .signature-line { border-top: 1px solid #000; width: 90%; margin: 0 auto 4px auto; }
         .sig-input { width: 95%; border: none; text-align: center; font-size: 10px; font-weight: bold; font-family: Arial, sans-serif; outline: none; background: transparent; }
         .sig-input-phone { width: 95%; border: none; text-align: center; font-size: 9px; color: #555; font-family: Arial, sans-serif; outline: none; background: transparent; }
+
         .footer-text { font-size: 8px; margin-top: 10px; text-align: left; line-height: 1.2; }
 
-        .alert-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(3px); }
-        .alert-box { background: white; padding: 25px; border-radius: 10px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: scaleIn 0.2s ease-out; }
-        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .alert-box h3 { margin-top: 0; font-size: 20px; font-weight: bold; color: #1e3a8a; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 15px; }
+        /* Custom Notifikasi Alert */
+        .alert-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .alert-box { background: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .alert-box h3 { margin-top: 0; font-size: 18px; font-weight: bold; }
+        .alert-box button { margin-top: 15px; background: #3b82f6; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
 
+        /* Aturan Khusus Printer Fisik untuk Mencegah Halaman Kosong */
         @media print {
             body, html { background: white; margin: 0; padding: 0; height: auto; }
             .no-print { display: none !important; }
@@ -88,38 +99,37 @@
         }
     </style>
     
+    <!-- Tag Style Khusus untuk Mengatur Orientasi Kertas Saat Diprint (Dinamis) -->
     <style id="page-orientation-style">
         @page { size: portrait; margin: 0mm; }
     </style>
 </head>
 <body class="text-gray-800">
 
-<div class="w-full bg-blue-700 text-white shadow-md p-4 flex flex-wrap justify-between items-center no-print">
+<div class="w-full bg-blue-600 text-white shadow-md p-4 flex flex-wrap justify-between items-center no-print">
     <div>
         <h1 class="text-2xl font-bold">Surat Jalan Logistik & Comex</h1>
         <p id="topDateDisplay" class="text-blue-200 text-sm mt-1"></p>
     </div>
-    <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
-        <button onclick="switchTab('input')" class="bg-blue-900 px-4 py-2 rounded hover:bg-blue-800 transition text-sm sm:text-base border border-blue-500 shadow-sm">📝 Input Data</button>
-        <button onclick="switchTab('preview')" class="bg-blue-900 px-4 py-2 rounded hover:bg-blue-800 transition text-sm sm:text-base border border-blue-500 shadow-sm">📄 Preview & Cetak</button>
-        <button onclick="switchTab('validasi')" class="bg-blue-900 px-4 py-2 rounded hover:bg-blue-800 transition text-sm sm:text-base border border-blue-500 shadow-sm">📂 Upload Validasi</button>
-        <button onclick="switchTab('log')" class="bg-yellow-500 text-yellow-900 px-4 py-2 rounded hover:bg-yellow-400 transition text-sm sm:text-base font-bold shadow-md">🕒 Log Aktivitas</button>
+    <div class="flex space-x-2 mt-2 sm:mt-0">
+        <button onclick="switchTab('input')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">📝 Input Data</button>
+        <button onclick="switchTab('preview')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">📄 Preview & Cetak</button>
+        <button onclick="switchTab('validasi')" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">📂 Upload Validasi</button>
     </div>
 </div>
 
-<!-- Custom Alert / Modal Dialog -->
 <div id="customAlert" class="alert-overlay">
     <div class="alert-box">
         <h3 id="alertTitle">Notifikasi</h3>
-        <p id="alertMessage" class="mt-2 text-gray-700 mb-5 leading-relaxed font-medium"></p>
-        <div id="alertButtons" class="mt-4 flex justify-center gap-3">
-            <button onclick="closeAlert()" id="alertOkBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow-sm transition">Tutup</button>
-        </div>
+        <p id="alertMessage"></p>
+        <button onclick="closeAlert()">Tutup</button>
     </div>
 </div>
 
 <!-- ======================= TAB 1: INPUT DATA ======================= -->
 <div id="tab-input" class="p-6 w-full mx-auto">
+
+    <!-- Teks Bergerak (Motivasi Kerja) -->
     <div class="bg-yellow-100 border-l-4 border-yellow-500 p-3 mb-6 rounded shadow-sm flex items-center">
         <span class="mr-3 text-xl">💡</span>
         <marquee behavior="scroll" direction="left" scrollamount="6" class="font-bold text-yellow-800 text-sm md:text-base tracking-wide">
@@ -153,70 +163,69 @@
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div>
                 <label class="block text-sm font-semibold mb-1">Tanggal</label>
-                <input type="date" id="inTanggal" onchange="syncNoSurat()" class="w-full p-2 border rounded focus:ring-blue-500 text-center font-semibold">
+                <input type="date" id="inTanggal" onchange="syncNoSurat()" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
             <div class="lg:col-span-2">
                 <label class="block text-sm font-semibold mb-1">Nomor Surat Jalan</label>
-                <input type="text" id="inNoSurat" readonly class="w-full p-2 border rounded bg-gray-200 text-gray-800 font-bold cursor-not-allowed text-center text-lg shadow-inner">
+                <input type="text" id="inNoSurat" readonly class="w-full p-2 border rounded bg-gray-200 text-gray-700 font-bold cursor-not-allowed text-center" title="Nomor dibuat otomatis">
             </div>
             <div>
                 <label class="block text-sm font-semibold mb-1">No. STO / PO</label>
-                <input type="text" id="inNoSTO" class="w-full p-2 border rounded focus:ring-blue-500 text-center font-semibold">
+                <input type="text" id="inNoSTO" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
             <div>
                 <label class="block text-sm font-semibold mb-1">No. GI</label>
-                <input type="text" id="inNoGI" class="w-full p-2 border rounded focus:ring-blue-500 text-center font-semibold">
+                <input type="text" id="inNoGI" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
-            <div></div>
-            
+            <div></div> <!-- Spacer -->
             <div class="lg:col-span-3">
                 <label class="block text-sm font-semibold mb-1">Dikirim Dari</label>
-                <input type="text" id="inDari" value="BSS" class="w-full p-2 border rounded focus:ring-blue-500 font-semibold">
+                <input type="text" id="inDari" value="BSS" class="w-full p-2 border rounded focus:ring-blue-500">
             </div>
             <div class="lg:col-span-3">
                 <label class="block text-sm font-semibold mb-1">Dikirim Ke</label>
                 <div id="wrap-ke">
-                    <input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500 font-semibold">
+                    <input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500">
                 </div>
             </div>
             <div class="lg:col-span-6 hidden" id="wrap-cost-center">
-                <label class="block text-sm font-bold mb-1 text-blue-700">Kode Cost Center (Otomatis)</label>
-                <input type="text" id="inCostCenter" readonly class="w-full p-2 border-2 border-blue-200 rounded bg-blue-50 text-blue-800 font-bold text-center cursor-not-allowed shadow-inner tracking-widest text-lg">
+                <label class="block text-sm font-semibold mb-1">Cost Center</label>
+                <input type="text" id="inCostCenter" readonly class="w-full p-2 border rounded bg-gray-200 text-gray-700 font-bold cursor-not-allowed">
             </div>
         </div>
     </div>
 
     <div class="bg-white rounded-lg shadow-md p-6 mb-6 border-l-4 border-indigo-500">
-        <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Informasi Penandatangan</h2>
+        <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Informasi Penandatangan (Signers)</h2>
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="signer-grid">
             <div>
                 <label class="block text-sm font-semibold mb-1">Dibuat oleh</label>
-                <input type="text" id="inTtd1" value="User Pengirim" class="w-full p-2 border rounded focus:ring-blue-500 text-center font-semibold">
-                <label class="inline-flex items-center mt-2 cursor-pointer bg-red-50 p-1.5 rounded w-full border border-red-100">
+                <input type="text" id="inTtd1" value="User Pengirim" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
+                <label class="inline-flex items-center mt-2 cursor-pointer">
                     <input type="checkbox" id="inApproveStamp" class="form-checkbox h-4 w-4 text-red-600 rounded border-gray-300">
-                    <span class="ml-2 text-xs font-bold text-red-600 uppercase">Cap APPROVED</span>
+                    <span class="ml-2 text-xs font-bold text-red-600">+ Cap APPROVED</span>
                 </label>
             </div>
             <div>
                 <label id="label-ttd2" class="block text-sm font-semibold mb-1">Diketahui oleh</label>
-                <input type="text" id="inTtd2" value="Atasan Langsung" class="w-full p-2 border rounded focus:ring-blue-500 text-center font-semibold">
-                <label class="inline-flex items-center mt-2 cursor-pointer bg-green-50 p-1.5 rounded w-full border border-green-100" id="wrap-approve-atasan">
+                <input type="text" id="inTtd2" value="Atasan Langsung" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
+                <label class="inline-flex items-center mt-2 cursor-pointer" id="wrap-approve-atasan">
                     <input type="checkbox" id="inApproveAtasan" class="form-checkbox h-4 w-4 text-green-600 rounded border-gray-300">
-                    <span class="ml-2 text-xs font-bold text-green-600 uppercase">Cap APPROVED Atasan</span>
+                    <span class="ml-2 text-xs font-bold text-green-600">+ Cap APPROVED (Atasan)</span>
                 </label>
             </div>
             <div>
                 <label id="label-ttd3" class="block text-sm font-semibold mb-1">Diperiksa oleh</label>
-                <input type="text" id="inTtd3" value="Security" class="w-full p-2 border rounded focus:ring-blue-500 text-center font-semibold">
+                <input type="text" id="inTtd3" value="Security" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
             <div>
                 <label id="label-ttd4" class="block text-sm font-semibold mb-1">Dibawa oleh</label>
-                <input type="text" id="inTtd4" value="Delivery" class="w-full p-2 border rounded focus:ring-blue-500 mb-2 text-center font-semibold" placeholder="Nama Driver">
-                <input type="text" id="inTtd4Phone" value="0812..." class="w-full p-2 border rounded focus:ring-blue-500 text-sm bg-gray-50 text-center font-semibold text-gray-500" placeholder="No. Telp">
+                <input type="text" id="inTtd4" value="Delivery" class="w-full p-2 border rounded focus:ring-blue-500 mb-2 text-center" placeholder="Nama Driver">
+                <input type="text" id="inTtd4Phone" value="0812..." class="w-full p-2 border rounded focus:ring-blue-500 text-sm bg-gray-50 text-center" placeholder="No. Telp">
             </div>
             <div id="signer5-container">
                 <label class="block text-sm font-semibold mb-1">Diterima oleh</label>
-                <input type="text" id="inTtd5" value="User Penerima" class="w-full p-2 border rounded focus:ring-blue-500 text-center font-semibold">
+                <input type="text" id="inTtd5" value="User Penerima" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
             </div>
         </div>
     </div>
@@ -224,9 +233,9 @@
     <div class="bg-white rounded-lg shadow-md p-6 mb-6 overflow-x-auto">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Daftar Material</h2>
         <table class="w-full text-sm text-center border" id="inputTableMaterial">
-            <thead class="bg-blue-50 border-b">
+            <thead class="bg-gray-100 border-b">
                 <tr>
-                    <th class="p-2 border text-center align-middle" id="inThMat">Material</th>
+                    <th class="p-2 border text-center align-middle">Material</th>
                     <th class="p-2 border text-center align-middle" id="inThDesc">Material Description</th>
                     <th class="p-2 border text-center align-middle" id="inThPart">Mfr Part Number</th>
                     <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">SN Module</th>
@@ -237,48 +246,48 @@
                     <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">No. WO</th>
                     <th class="p-2 border text-center align-middle col-input-comex hidden bg-yellow-100">No. MO Reff</th>
                     <th class="p-2 border text-center align-middle" id="inThRemarks">Remarks</th>
-                    <th class="p-2 border text-center align-middle text-red-600">X</th>
+                    <th class="p-2 border text-center align-middle">Aksi</th>
                 </tr>
             </thead>
             <tbody id="inputTbody"></tbody>
         </table>
         <div class="flex flex-wrap gap-3 mt-4">
-            <button onclick="addRow()" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 font-bold transition">+ Tambah Baris Material</button>
-            <button onclick="clearAllRows()" class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 font-bold transition">🗑️ Clear Semua</button>
-            <span class="text-sm text-gray-700 self-center ml-2 bg-yellow-100 px-3 py-1.5 rounded border border-yellow-400 shadow-sm font-medium">
-                💡 <b>Tip:</b> Klik salah satu kolom, lalu <b>Paste (Ctrl+V)</b> dari Excel.
+            <button onclick="addRow()" class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600 font-semibold">+ Tambah Baris Material</button>
+            <button onclick="clearAllRows()" class="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 font-semibold">🗑️ Clear Semua Baris</button>
+            <span class="text-sm text-gray-700 self-center ml-2 bg-yellow-100 px-3 py-1.5 rounded border border-yellow-400 shadow-sm">
+                💡 <b>Tip:</b> Klik salah satu kolom, lalu tekan <b>Paste (Ctrl+V)</b> untuk memasukkan data dari Excel.
             </span>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6 border-t-4 border-gray-400">
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Upload Dokumentasi / Foto Barang</h2>
         <div class="flex flex-wrap gap-4 mb-4">
-            <label class="cursor-pointer bg-blue-100 text-blue-800 font-bold px-4 py-2 rounded border border-blue-300 hover:bg-blue-200 transition shadow-sm">
-                📸 Buka Kamera
+            <label class="cursor-pointer bg-blue-100 text-blue-700 px-4 py-2 rounded border border-blue-300 hover:bg-blue-200 transition">
+                📸 Ambil Foto (Kamera)
                 <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleDocsCapture(event)">
             </label>
-            <label class="cursor-pointer bg-gray-100 text-gray-800 font-bold px-4 py-2 rounded border border-gray-300 hover:bg-gray-200 transition shadow-sm">
-                📁 Pilih Galeri
+            <label class="cursor-pointer bg-gray-100 text-gray-700 px-4 py-2 rounded border hover:bg-gray-200 transition">
+                📁 Pilih File (Galeri)
                 <input type="file" accept="image/*" multiple class="hidden" onchange="handleDocsUpload(event)">
             </label>
-            <button onclick="clearDocsPhotos()" class="bg-red-100 text-red-700 font-bold px-4 py-2 rounded border border-red-300 hover:bg-red-200 shadow-sm">🗑️ Hapus Semua Foto</button>
+            <button onclick="clearDocsPhotos()" class="bg-red-100 text-red-600 px-4 py-2 rounded border border-red-300 hover:bg-red-200">🗑️ Hapus Semua</button>
         </div>
-        <div id="docsPreviewContainer" class="flex flex-wrap gap-3 mt-4 p-4 border-2 border-dashed border-gray-300 rounded-lg min-h-[160px] bg-gray-50 items-center justify-center">
-            <p class="text-gray-400 font-semibold italic" id="docsEmptyText">Belum ada foto yang ditambahkan ke surat jalan ini.</p>
+        <div id="docsPreviewContainer" class="flex flex-wrap gap-2 mt-4 p-4 border-2 border-dashed border-gray-300 rounded min-h-[150px] bg-gray-50 items-center justify-center">
+            <p class="text-gray-400 text-sm italic" id="docsEmptyText">Belum ada foto yang ditambahkan.</p>
         </div>
     </div>
 
-    <button onclick="saveToDriveAndSheet()" id="btnSaveData" class="w-full bg-blue-700 text-white font-bold py-4 px-4 rounded-lg shadow-xl hover:bg-blue-800 text-lg transition transform hover:scale-[1.01]">
-        💾 SIMPAN & SINKRONISASI KE GOOGLE SHEETS
+    <button onclick="saveToDriveAndSheet()" id="btnSaveData" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded shadow-lg hover:bg-blue-700">
+        💾 SIMPAN DATA KE DATABASE (SHEETS)
     </button>
 </div>
 
 <!-- ======================= TAB 2: PREVIEW & CETAK ======================= -->
-<div id="tab-preview" class="p-6 hidden bg-gray-900">
-    <div class="mb-5 flex gap-4 no-print justify-center">
-        <button onclick="printDoc()" class="bg-green-500 text-white px-8 py-3 rounded-lg shadow-lg hover:bg-green-600 font-bold text-lg transition">🖨️ Cetak (Printer Fisik)</button>
-        <button onclick="downloadPDF()" class="bg-red-500 text-white px-8 py-3 rounded-lg shadow-lg hover:bg-red-600 font-bold text-lg transition">📄 Download PDF</button>
+<div id="tab-preview" class="p-6 hidden bg-gray-800">
+    <div class="mb-4 flex gap-4 no-print justify-center">
+        <button onclick="printDoc()" class="bg-green-600 text-white px-6 py-2 rounded shadow hover:bg-green-700 font-bold">🖨️ Cetak Printer</button>
+        <button onclick="downloadPDF()" class="bg-red-600 text-white px-6 py-2 rounded shadow hover:bg-red-700 font-bold">📄 Download PDF</button>
     </div>
 
     <div class="w-full overflow-x-auto shadow-2xl pb-4 flex justify-center" id="print-wrapper">
@@ -306,16 +315,16 @@
                 </tr>
             </table>
 
-            <div style="text-align: center; font-size: 14px; font-weight: bold; margin: 10px 0; text-decoration: underline; position:relative; z-index:10;" id="docTitleLabel">SURAT JALAN KELUAR</div>
+            <div style="text-align: center; font-size: 14px; font-weight: bold; margin: 10px 0; text-decoration: underline;" id="docTitleLabel">SURAT JALAN KELUAR</div>
 
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:10;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div class="info-text">
                     <table>
-                        <tr><td style="width:70px;">Tanggal</td><td>: <span id="outTanggal"></span></td></tr>
+                        <tr><td style="width:65px;">Tanggal</td><td>: <span id="outTanggal"></span></td></tr>
                         <tr><td>No. Surat</td><td>: <span id="outNoSurat" style="font-weight:bold; font-size: 12px;"></span></td></tr>
                         <tr><td>Dari</td><td>: <span id="outDari"></span></td></tr>
                         <tr><td>Ke</td><td>: <span id="outKe"></span></td></tr>
-                        <tr id="row-out-cost-center" style="display:none;"><td>Cost Center</td><td style="font-weight:bold;">: <span id="outCostCenter"></span></td></tr>
+                        <tr id="row-out-cost-center" style="display:none;"><td>Cost Center</td><td>: <span id="outCostCenter"></span></td></tr>
                     </table>
                 </div>
                 <div style="display: flex; flex-direction: column; align-items: flex-end; text-align:right;">
@@ -324,11 +333,11 @@
                 </div>
             </div>
 
-            <table class="pdf-table" id="previewTable" style="position:relative; z-index:10;">
+            <table class="pdf-table" id="previewTable">
                 <thead>
                     <tr>
                         <th class="col-num">No</th>
-                        <th class="col-std" id="outThMat">Material</th>
+                        <th class="col-std">Material</th>
                         <th class="col-desc" id="outThDesc">Material description</th>
                         <th class="col-std" id="outThPart">Mfr Part Number</th>
                         <th class="col-comex">SN Module</th>
@@ -344,12 +353,14 @@
                 <tbody id="outTbody"></tbody>
             </table>
 
-            <div id="previewLampiran" class="lampiran-box hidden" style="position:relative; z-index:10; margin-top:10px;">
+            <!-- Lampiran Foto -->
+            <div id="previewLampiran" class="lampiran-box hidden">
                 <div class="lampiran-title">LAMPIRAN DOKUMENTASI PENGIRIMAN</div>
                 <div id="lampiranImages" style="text-align:center;"></div>
             </div>
 
-            <table class="signature-table" id="previewSignatureTable" style="position:relative; z-index:10;">
+            <!-- Tabel Tanda Tangan (Sejajar Sempurna) -->
+            <table class="signature-table" id="previewSignatureTable">
                 <tr class="sig-title-row">
                     <td>Dibuat oleh,</td>
                     <td id="outLabelTtd2">Diketahui oleh,</td>
@@ -358,8 +369,12 @@
                     <td class="sig-col-5">Diterima oleh,</td>
                 </tr>
                 <tr class="sig-space-row">
-                    <td><div id="outApproveStamp" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%) rotate(-15deg); border: 2px solid red; color: red; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 14px; letter-spacing: 2px; opacity: 0.8; z-index: 10;">APPROVED</div></td>
-                    <td><div id="outApproveAtasanStamp" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%) rotate(-15deg); border: 2px solid #16a34a; color: #16a34a; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 14px; letter-spacing: 2px; opacity: 0.8; z-index: 10;">APPROVED</div></td>
+                    <td>
+                        <div id="outApproveStamp" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%) rotate(-15deg); border: 2px solid red; color: red; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 14px; letter-spacing: 2px; opacity: 0.8; z-index: 10;">APPROVED</div>
+                    </td>
+                    <td>
+                        <div id="outApproveAtasanStamp" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%) rotate(-15deg); border: 2px solid #16a34a; color: #16a34a; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 14px; letter-spacing: 2px; opacity: 0.8; z-index: 10;">APPROVED</div>
+                    </td>
                     <td></td><td></td><td class="sig-col-5"></td>
                 </tr>
                 <tr class="sig-name-row">
@@ -376,7 +391,7 @@
                 </tr>
             </table>
 
-            <div class="footer-text" style="position:relative; z-index:10;">
+            <div class="footer-text">
                 Head Office : Landmark Pluit, Jalan Pluit Selatan Raya, Komplek Perkantoran, Landmark Pluit D, No. 17, Pluit, Penjaringan, Jakarta Utara - DKI Jakarta<br>
                 Telepon : 021 - 22677447
             </div>
@@ -388,87 +403,54 @@
 <div id="tab-validasi" class="p-6 hidden w-full max-w-4xl mx-auto">
     <div class="bg-white rounded-lg shadow-md p-8 border-t-4 border-green-500">
         <h2 class="text-2xl font-bold text-gray-800 mb-2">Upload Dokumen Validasi</h2>
-        <p class="text-gray-600 mb-6 border-b pb-4">Unggah foto/scan Surat Jalan yang telah ditandatangani lengkap oleh semua pihak.</p>
+        <p class="text-gray-600 mb-6 border-b pb-4">Unggah foto/scan Surat Jalan yang telah ditandatangani lengkap.</p>
         
         <div class="mb-4">
             <label class="block text-sm font-semibold mb-1">Nomor Surat Jalan</label>
-            <input type="text" id="valNoSurat" readonly class="w-full p-3 border rounded bg-gray-100 font-bold text-blue-800 text-center text-lg">
+            <input type="text" id="valNoSurat" readonly class="w-full p-3 border rounded bg-gray-100 font-bold text-blue-800 text-center">
         </div>
 
         <div class="mb-6">
             <label class="block text-sm font-semibold mb-2">Pilih Metode Upload</label>
             <div class="flex flex-col sm:flex-row gap-4">
-                <label class="flex-1 cursor-pointer bg-blue-50 text-blue-800 text-center px-4 py-5 rounded-lg border-2 border-blue-300 hover:bg-blue-100 transition font-bold shadow-sm">
-                    📸 Buka Kamera HP
+                <label class="flex-1 cursor-pointer bg-blue-100 text-blue-800 text-center px-4 py-4 rounded-lg border-2 border-blue-300 hover:bg-blue-200 transition font-semibold shadow-sm">
+                    📸 Ambil Foto (Kamera)
                     <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleValFileSelect(event)">
                 </label>
-                <label class="flex-1 cursor-pointer bg-gray-50 text-gray-800 text-center px-4 py-5 rounded-lg border-2 border-gray-300 hover:bg-gray-100 transition font-bold shadow-sm">
-                    📁 Pilih File (PDF/Foto)
+                <label class="flex-1 cursor-pointer bg-gray-100 text-gray-800 text-center px-4 py-4 rounded-lg border-2 border-gray-300 hover:bg-gray-200 transition font-semibold shadow-sm">
+                    📁 Pilih File (PDF/Galeri)
                     <input type="file" accept="application/pdf,image/*" class="hidden" onchange="handleValFileSelect(event)">
                 </label>
             </div>
-            <div class="mt-3 text-sm font-semibold text-gray-700 bg-gray-100 p-2 rounded text-center">
-                File Terpilih: <span id="valSelectedFileName" class="text-blue-700 italic">Belum ada file dipilih</span>
+            <div class="mt-2 text-sm font-medium text-gray-700">
+                File Terpilih: <span id="valSelectedFileName" class="text-blue-600 italic">Belum ada file</span>
             </div>
         </div>
 
-        <button onclick="uploadValidasiToDrive()" id="btnUploadVal" class="w-full bg-green-600 text-white font-bold py-4 px-4 rounded-lg shadow-lg hover:bg-green-700 text-lg transition transform hover:scale-[1.01]">
+        <button onclick="uploadValidasiToDrive()" id="btnUploadVal" class="w-full bg-green-600 text-white font-bold py-4 px-4 rounded-lg shadow-lg hover:bg-green-700 text-lg transition">
             🚀 UPLOAD KE GOOGLE DRIVE
         </button>
         <input type="hidden" id="uploadedValidasiUrl" value="">
         
         <div class="mt-8 border-t pt-6">
-            <h3 class="font-bold text-gray-700 mb-2">Bagikan Bukti Pengiriman</h3>
+            <h3 class="font-bold text-gray-700 mb-2">Bagikan Informasi via WhatsApp</h3>
             <button onclick="shareWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-[#128C7E] flex items-center justify-center gap-2 transition">
-                Kirim via WhatsApp
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Kirim ke WhatsApp
             </button>
         </div>
     </div>
 </div>
 
-<!-- ======================= TAB 4: LOG AKTIVITAS (CLOUD SYNC) ======================= -->
-<div id="tab-log" class="p-6 hidden w-full mx-auto">
-    <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-yellow-500">
-        <div class="flex flex-col md:flex-row justify-between items-center border-b pb-4 mb-4 gap-4">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-800">Database Log Pengiriman (Cloud)</h2>
-                <p class="text-sm text-gray-500 mt-1 font-medium">Data disinkronisasikan langsung dari Google Sheets. Data aman & permanen.</p>
-            </div>
-            <div class="flex flex-wrap gap-2 w-full md:w-auto">
-                <input type="text" id="searchLogInput" onkeyup="filterHistoryLog()" placeholder="🔍 Cari No Surat / Tujuan..." class="p-2 border-2 border-gray-300 rounded-lg text-sm w-full md:w-64 font-semibold">
-                <button onclick="fetchLogsFromSheet()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-bold shadow-sm whitespace-nowrap transition">🔄 Refresh Data</button>
-            </div>
-        </div>
-        
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse bg-white rounded-lg shadow-sm border">
-                <thead>
-                    <tr class="bg-gray-800 text-white text-sm">
-                        <th class="p-3 border font-semibold">Waktu Disimpan</th>
-                        <th class="p-3 border font-semibold">Nomor Surat</th>
-                        <th class="p-3 border font-semibold">Jenis Form</th>
-                        <th class="p-3 border font-semibold">Dikirim Ke</th>
-                        <th class="p-3 border text-center font-semibold">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="historyTbody" class="text-sm text-gray-700 font-medium">
-                    <!-- Data log diinjeksi via JS -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
 <script>
-    // URL Google Apps Script Anda (Wajib "Deploy as New Version" setelah Code.gs diupdate)
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbymqrxnOcZWJKti01za1Z9FOLCPPPJg4hdp6nibpJunxAmDHrtClfOCMT5oPL1MPy_Z/exec';
+    // Endpoint Google Apps Script Aktif
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwHOODhQD0401zh1-0y3g1_8KB_L0Uk3vXC2uDseYNoudzn3asrr5plrK41b1bD-vQK/exec';
     
-    let docsPhotos = []; 
+    let docsPhotos = [];
     let validasiFileBase64 = "";
     let validasiMimeType = "";
-    let confirmCallback = null;
-    let syncedLogs = []; // Variable global penyimpan data dari cloud
-
+    
+    // Fitur Paste Dari Excel
     document.getElementById('inputTbody').addEventListener('paste', function(e) {
         let paste = (e.clipboardData || window.clipboardData).getData('text');
         if (paste.indexOf('\t') === -1 && paste.indexOf('\n') === -1) return; 
@@ -496,7 +478,7 @@
             
             for (let j = 0; j < cols.length; j++) {
                 let targetColIndex = startColIndex + j;
-                if (targetColIndex < visibleInputs.length && cols[j]) {
+                if (targetColIndex < visibleInputs.length) {
                     visibleInputs[targetColIndex].value = cols[j].trim();
                 }
             }
@@ -518,62 +500,49 @@
         document.getElementById('topDateDisplay').innerText = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
     }
 
-    function showAlert(title, message, callback = null) {
+    function showAlert(title, message) {
         document.getElementById('alertTitle').innerText = title;
         document.getElementById('alertMessage').innerText = message;
-        confirmCallback = callback;
-        
-        const btnContainer = document.getElementById('alertButtons');
-        if (callback) {
-            btnContainer.innerHTML = `
-                <button onclick="handleModalConfirm(true)" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg font-bold shadow transition">Ya, Lanjutkan</button>
-                <button onclick="handleModalConfirm(false)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2.5 rounded-lg font-bold transition">Batal</button>
-            `;
-        } else {
-            btnContainer.innerHTML = `<button onclick="closeAlert()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg font-bold shadow transition">OK</button>`;
-        }
         document.getElementById('customAlert').style.display = 'flex';
     }
     
-    function closeAlert() { 
-        document.getElementById('customAlert').style.display = 'none'; 
-        confirmCallback = null;
-    }
-
-    function handleModalConfirm(result) {
-        const cb = confirmCallback;
-        closeAlert();
-        if (result && typeof cb === 'function') {
-            cb();
-        }
-    }
+    function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
 
     const costCenterMap = {
-        "MBL Gen Cost": "A440010000", "MBL DATA CENTER": "A440010100", "MBL Mining Academy": "A440010110",
-        "MBL OD": "A440010120", "MBL GS": "A440010130", "MBL Finance": "A440010140",
-        "MBL Supply Managemen": "A440010150", "MBL CIVIL": "A440010170", "MBL Engineering": "A440010200",
-        "MBL HRDGA": "A440010300", "MBL IT": "A440010400", "MBL Mat Management": "A440010500",
-        "MBL Produksi": "A440010600", "MBL Rep Maintenance": "A440010700", "MBL SHE": "A440010800",
+        "MBL Gen Cost": "A440010000",
+        "MBL DATA CENTER": "A440010100",
+        "MBL Mining Academy": "A440010110",
+        "MBL OD": "A440010120",
+        "MBL GS": "A440010130",
+        "MBL Finance": "A440010140",
+        "MBL Supply Managemen": "A440010150",
+        "MBL CIVIL": "A440010170",
+        "MBL Engineering": "A440010200",
+        "MBL HRDGA": "A440010300",
+        "MBL IT": "A440010400",
+        "MBL Mat Management": "A440010500",
+        "MBL Produksi": "A440010600",
+        "MBL Rep Maintenance": "A440010700",
+        "MBL SHE": "A440010800",
         "MBL Operation": "A440010900"
     };
 
     function updateCostCenter() {
         const keEl = document.getElementById('inKe');
         const ccEl = document.getElementById('inCostCenter');
-        if (keEl && keEl.tagName === 'SELECT' && ccEl) {
+        if (keEl && keEl.tagName === 'SELECT') {
             ccEl.value = costCenterMap[keEl.value] || '';
         }
     }
 
     function switchTab(tabId) {
-        ['input', 'preview', 'validasi', 'log'].forEach(id => {
+        ['input', 'preview', 'validasi'].forEach(id => {
             document.getElementById('tab-' + id).classList.add('hidden');
         });
         document.getElementById('tab-' + tabId).classList.remove('hidden');
 
         if(tabId === 'preview') buildPreview();
         if(tabId === 'validasi') syncNoSurat();
-        if(tabId === 'log') fetchLogsFromSheet(); // Otomatis sync cloud saat tab dibuka
     }
 
     function toggleComexMode() {
@@ -598,96 +567,132 @@
         const wrapCostCenter = document.getElementById('wrap-cost-center');
         const rowOutCostCenter = document.getElementById('row-out-cost-center');
         
-        const inThMat = document.getElementById('inThMat'); const inThDesc = document.getElementById('inThDesc');
-        const inThPart = document.getElementById('inThPart'); const inThQty = document.getElementById('inThQty');
-        const inThBatch = document.getElementById('inThBatch'); const inThRemarks = document.getElementById('inThRemarks');
+        const inThDesc = document.getElementById('inThDesc');
+        const inThPart = document.getElementById('inThPart');
+        const inThQty = document.getElementById('inThQty');
+        const inThBatch = document.getElementById('inThBatch');
+        const inThRemarks = document.getElementById('inThRemarks');
         
-        const outThMat = document.getElementById('outThMat'); const outThDesc = document.getElementById('outThDesc');
-        const outThPart = document.getElementById('outThPart'); const outThQty = document.getElementById('outThQty');
-        const outThBatch = document.getElementById('outThBatch'); const outThRemarks = document.getElementById('outThRemarks');
+        const outThDesc = document.getElementById('outThDesc');
+        const outThPart = document.getElementById('outThPart');
+        const outThQty = document.getElementById('outThQty');
+        const outThBatch = document.getElementById('outThBatch');
+        const outThRemarks = document.getElementById('outThRemarks');
 
         if (mode === 'comex') {
             comexCols.forEach(el => el.classList.remove('hidden'));
             sigTable.classList.remove('sig-budget-mode');
             document.getElementById('pageOrientation').value = 'landscape';
-            signerGrid.classList.remove('md:grid-cols-4'); signerGrid.classList.add('md:grid-cols-5');
+            
+            signerGrid.classList.remove('md:grid-cols-4');
+            signerGrid.classList.add('md:grid-cols-5');
             sigCol5Inputs.style.display = 'block';
             
-            inThMat.innerText = "Material"; outThMat.innerText = "Material";
             inThDesc.innerText = "Material Description"; outThDesc.innerText = "Material description";
             inThPart.innerText = "Mfr Part Number"; outThPart.innerText = "Mfr Part Number";
             inThQty.innerText = "Qty"; outThQty.innerText = "Qty";
             inThBatch.innerText = "Batch"; outThBatch.innerText = "Batch";
             inThRemarks.innerText = "Remarks"; outThRemarks.innerText = "Remarks";
             
-            ttd2Label.innerText = "Diketahui oleh"; ttd3Label.innerText = "Diperiksa oleh"; ttd4Label.innerText = "Dibawa oleh";
+            ttd2Label.innerText = "Diketahui oleh";
+            ttd3Label.innerText = "Diperiksa oleh";
+            ttd4Label.innerText = "Dibawa oleh";
             ttd4Phone.style.display = 'block';
             
             if (document.getElementById('inTtd2').value === 'User') document.getElementById('inTtd2').value = 'Atasan Langsung';
             if (document.getElementById('inTtd4').value === 'Staff Logistik') document.getElementById('inTtd4').value = 'Delivery';
+            
             if (wrapApproveAtasan && containerTtd2) containerTtd2.appendChild(wrapApproveAtasan);
             if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[1].appendChild(outApproveAtasanStamp);
             
-            wrapCostCenter.classList.add('hidden'); rowOutCostCenter.style.display = 'none';
-            if (wrapKe && !wrapKe.querySelector('input')) wrapKe.innerHTML = `<input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500 font-semibold">`;
+            wrapCostCenter.classList.add('hidden');
+            rowOutCostCenter.style.display = 'none';
+            if (wrapKe && !wrapKe.querySelector('input')) {
+                wrapKe.innerHTML = `<input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500">`;
+            }
             
         } else if (mode === 'budget') {
             comexCols.forEach(el => el.classList.add('hidden'));
             sigTable.classList.add('sig-budget-mode');
             document.getElementById('pageOrientation').value = 'portrait';
-            signerGrid.classList.remove('md:grid-cols-5'); signerGrid.classList.add('md:grid-cols-4');
+            
+            signerGrid.classList.remove('md:grid-cols-5');
+            signerGrid.classList.add('md:grid-cols-4');
             sigCol5Inputs.style.display = 'none';
             
-            inThMat.innerText = "No"; outThMat.innerText = "No";
-            inThDesc.innerText = "Material"; outThDesc.innerText = "Material";
-            inThPart.innerText = "PR Short Text"; outThPart.innerText = "PR Short Text";
-            inThQty.innerText = "MPN"; outThQty.innerText = "MPN";
-            inThBatch.innerText = "Qty"; outThBatch.innerText = "Qty";
-            inThRemarks.innerText = "Requestor"; outThRemarks.innerText = "Requestor";
+            inThDesc.innerText = "PR Short Text"; outThDesc.innerText = "PR Short Text";
+            inThPart.innerText = "MPN"; outThPart.innerText = "MPN";
+            inThQty.innerText = "Qty"; outThQty.innerText = "Qty";
+            inThBatch.innerText = "Requestor"; outThBatch.innerText = "Requestor";
+            inThRemarks.innerText = "Tracking No."; outThRemarks.innerText = "Tracking No.";
             
-            // Kolom ke 11 sebenarnya untuk aksi hapus (X) atau remark tambahan (Tracking No)
-            const inputHeaders = document.querySelectorAll('#inputTableMaterial th');
-            if(inputHeaders.length >= 12) inputHeaders[11].innerText = "Tracking No.";
-            
-            ttd2Label.innerText = "Diambil Oleh"; ttd3Label.innerText = "Diperiksa Oleh"; ttd4Label.innerText = "Diketahui Oleh";
+            ttd2Label.innerText = "Diambil Oleh";
+            ttd3Label.innerText = "Diperiksa Oleh";
+            ttd4Label.innerText = "Diketahui Oleh";
             ttd4Phone.style.display = 'none';
             
-            document.getElementById('inTtd2').value = "User"; document.getElementById('inTtd4').value = "Staff Logistik";
+            document.getElementById('inTtd2').value = "User";
+            document.getElementById('inTtd4').value = "Staff Logistik";
+            
             if (wrapApproveAtasan && containerTtd4) containerTtd4.appendChild(wrapApproveAtasan);
             if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[3].appendChild(outApproveAtasanStamp);
             
-            wrapCostCenter.classList.remove('hidden'); rowOutCostCenter.style.display = 'table-row';
+            wrapCostCenter.classList.remove('hidden');
+            rowOutCostCenter.style.display = 'table-row';
             if (wrapKe && !wrapKe.querySelector('select')) {
-                wrapKe.innerHTML = `<select id="inKe" onchange="updateCostCenter()" class="w-full p-2 border rounded bg-white text-blue-700 font-bold focus:ring-blue-500 shadow-sm">
-                    ${Object.keys(costCenterMap).map(k => `<option value="${k}">${k}</option>`).join('')}
+                wrapKe.innerHTML = `<select id="inKe" onchange="updateCostCenter()" class="w-full p-2 border rounded focus:ring-blue-500 bg-white font-semibold">
+                    <option value="MBL Gen Cost">MBL Gen Cost</option>
+                    <option value="MBL DATA CENTER">MBL DATA CENTER</option>
+                    <option value="MBL Mining Academy">MBL Mining Academy</option>
+                    <option value="MBL OD">MBL OD</option>
+                    <option value="MBL GS">MBL GS</option>
+                    <option value="MBL Finance">MBL Finance</option>
+                    <option value="MBL Supply Managemen">MBL Supply Managemen</option>
+                    <option value="MBL CIVIL">MBL CIVIL</option>
+                    <option value="MBL Engineering">MBL Engineering</option>
+                    <option value="MBL HRDGA">MBL HRDGA</option>
+                    <option value="MBL IT">MBL IT</option>
+                    <option value="MBL Mat Management">MBL Mat Management</option>
+                    <option value="MBL Produksi">MBL Produksi</option>
+                    <option value="MBL Rep Maintenance">MBL Rep Maintenance</option>
+                    <option value="MBL SHE">MBL SHE</option>
+                    <option value="MBL Operation">MBL Operation</option>
                 </select>`;
                 updateCostCenter();
             }
             
         } else {
+            // Logistik Standar
             comexCols.forEach(el => el.classList.add('hidden'));
             sigTable.classList.remove('sig-budget-mode');
             document.getElementById('pageOrientation').value = 'portrait';
-            signerGrid.classList.remove('md:grid-cols-4'); signerGrid.classList.add('md:grid-cols-5');
+            
+            signerGrid.classList.remove('md:grid-cols-4');
+            signerGrid.classList.add('md:grid-cols-5');
             sigCol5Inputs.style.display = 'block';
             
-            inThMat.innerText = "Material"; outThMat.innerText = "Material";
             inThDesc.innerText = "Material Description"; outThDesc.innerText = "Material description";
             inThPart.innerText = "Mfr Part Number"; outThPart.innerText = "Mfr Part Number";
             inThQty.innerText = "Qty"; outThQty.innerText = "Qty";
             inThBatch.innerText = "Batch"; outThBatch.innerText = "Batch";
             inThRemarks.innerText = "Remarks"; outThRemarks.innerText = "Remarks";
             
-            ttd2Label.innerText = "Diketahui oleh"; ttd3Label.innerText = "Diperiksa oleh"; ttd4Label.innerText = "Dibawa oleh";
+            ttd2Label.innerText = "Diketahui oleh";
+            ttd3Label.innerText = "Diperiksa oleh";
+            ttd4Label.innerText = "Dibawa oleh";
             ttd4Phone.style.display = 'block';
             
             if (document.getElementById('inTtd2').value === 'User') document.getElementById('inTtd2').value = 'Atasan Langsung';
             if (document.getElementById('inTtd4').value === 'Staff Logistik') document.getElementById('inTtd4').value = 'Delivery';
+            
             if (wrapApproveAtasan && containerTtd2) containerTtd2.appendChild(wrapApproveAtasan);
             if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[1].appendChild(outApproveAtasanStamp);
             
-            wrapCostCenter.classList.add('hidden'); rowOutCostCenter.style.display = 'none';
-            if (wrapKe && !wrapKe.querySelector('input')) wrapKe.innerHTML = `<input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500 font-semibold">`;
+            wrapCostCenter.classList.add('hidden');
+            rowOutCostCenter.style.display = 'none';
+            if (wrapKe && !wrapKe.querySelector('input')) {
+                wrapKe.innerHTML = `<input type="text" id="inKe" class="w-full p-2 border rounded focus:ring-blue-500">`;
+            }
         }
         changeOrientation();
         syncNoSurat();
@@ -697,6 +702,7 @@
         const orientation = document.getElementById('pageOrientation').value;
         const pdfArea = document.getElementById('pdfArea');
         const pageStyle = document.getElementById('page-orientation-style');
+        
         if (orientation === 'landscape') {
             pdfArea.classList.add('landscape');
             if (pageStyle) pageStyle.innerHTML = "@page { size: landscape; margin: 0mm; }";
@@ -709,15 +715,28 @@
     function syncNoSurat() {
         const dateVal = document.getElementById('inTanggal').value;
         const mode = document.getElementById('docMode').value;
+        
         if(dateVal) {
             const d = new Date(dateVal);
             const pad = (n) => n.toString().padStart(2, '0');
             const dateStr = `${pad(d.getDate())}${pad(d.getMonth()+1)}${d.getFullYear().toString().slice(-2)}`;
             
             let storedData = JSON.parse(localStorage.getItem('bss_surat_seq'));
-            let currentSeq = (storedData && storedData.date === dateStr) ? storedData.seq : 1;
+            let currentSeq = 1;
             
-            let noSurat = mode === 'budget' ? `BSS/LOG-BUDGT/${dateStr}/${currentSeq.toString().padStart(3, '0')}` : `BSS/LOG/${dateStr}/${currentSeq.toString().padStart(3, '0')}`;
+            if (storedData && storedData.date === dateStr) {
+                currentSeq = storedData.seq;
+            } else {
+                currentSeq = 1; 
+            }
+            
+            let noSurat = "";
+            if (mode === 'budget') {
+                noSurat = `BSS/LOG-BUDGT/${dateStr}/${currentSeq.toString().padStart(3, '0')}`;
+            } else {
+                noSurat = `BSS/LOG/${dateStr}/${currentSeq.toString().padStart(3, '0')}`;
+            }
+            
             document.getElementById('inNoSurat').value = noSurat;
             document.getElementById('valNoSurat').value = noSurat;
         }
@@ -727,28 +746,35 @@
         const tbody = document.getElementById('inputTbody');
         const mode = document.getElementById('docMode').value;
         const tr = document.createElement('tr');
+        
         tr.innerHTML = `
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="material"></td>
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="desc"></td>
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="part"></td>
             <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="sn"></td>
             <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="eks"></td>
-            <td class="p-1 border text-center align-middle"><input type="number" class="w-full p-1 border rounded text-center font-bold" name="qty"></td>
+            <td class="p-1 border text-center align-middle"><input type="number" class="w-full p-1 border rounded text-center" name="qty"></td>
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="uom"></td>
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="batch"></td>
             <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="wo"></td>
             <td class="p-1 border text-center align-middle col-input-comex ${mode==='comex'?'':'hidden'}"><input type="text" class="w-full p-1 border rounded text-center" name="mo"></td>
             <td class="p-1 border text-center align-middle"><input type="text" class="w-full p-1 border rounded text-center" name="remarks"></td>
-            <td class="p-1 border text-center align-middle"><button onclick="this.closest('tr').remove()" class="bg-red-500 text-white px-2 py-1 rounded font-bold hover:bg-red-600 transition">X</button></td>
+            <td class="p-1 border text-center align-middle"><button onclick="this.closest('tr').remove()" class="bg-red-500 text-white px-2 py-1 rounded font-bold">X</button></td>
         `;
         tbody.appendChild(tr);
     }
 
-    function clearAllRows() { document.getElementById('inputTbody').innerHTML = ''; addRow(); }
+    function clearAllRows() {
+        document.getElementById('inputTbody').innerHTML = '';
+        addRow();
+    }
 
     function handleDocsUpload(event) { 
-        const files = event.target.files; if (!files) return;
-        for (let i = 0; i < files.length; i++) processDocsFile(files[i]);
+        const files = event.target.files;
+        if (!files) return;
+        for (let i = 0; i < files.length; i++) {
+            processDocsFile(files[i]);
+        }
         event.target.value = ''; 
     }
     
@@ -757,7 +783,10 @@
     function processDocsFile(file) {
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = function(e) { docsPhotos.push(e.target.result); renderDocsPreview(); };
+        reader.onload = function(e) {
+            docsPhotos.push(e.target.result);
+            renderDocsPreview();
+        };
         reader.readAsDataURL(file);
     }
 
@@ -766,13 +795,13 @@
     function renderDocsPreview() {
         const container = document.getElementById('docsPreviewContainer');
         if (docsPhotos.length === 0) {
-            container.innerHTML = `<p class="text-gray-400 font-semibold italic" id="docsEmptyText">Belum ada foto yang ditambahkan ke surat jalan ini.</p>`;
+            container.innerHTML = `<p class="text-gray-400 text-sm italic" id="docsEmptyText">Belum ada foto yang ditambahkan.</p>`;
             return;
         }
         container.innerHTML = '';
         docsPhotos.forEach(src => {
             const img = document.createElement('img');
-            img.src = src; img.className = "h-32 w-32 object-cover border-4 border-white rounded-lg shadow-md";
+            img.src = src; img.className = "h-32 object-contain border rounded shadow-sm";
             container.appendChild(img);
         });
     }
@@ -780,7 +809,8 @@
     function formatDate(dateString) {
         if(!dateString) return "";
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        const d = new Date(dateString); return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        const d = new Date(dateString);
+        return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
     }
 
     function buildPreview() {
@@ -788,7 +818,9 @@
         document.getElementById('outNoSurat').innerText = document.getElementById('inNoSurat').value;
         document.getElementById('outDari').innerText = document.getElementById('inDari').value;
         document.getElementById('outKe').innerText = document.getElementById('inKe').value;
-        if(document.getElementById('inCostCenter')) document.getElementById('outCostCenter').innerText = document.getElementById('inCostCenter').value;
+        if(document.getElementById('inCostCenter')) {
+            document.getElementById('outCostCenter').innerText = document.getElementById('inCostCenter').value;
+        }
         document.getElementById('outSTO').innerText = document.getElementById('inNoSTO').value;
         document.getElementById('outGI').innerText = document.getElementById('inNoGI').value;
 
@@ -799,29 +831,48 @@
         document.getElementById('outTtd4Phone').value = document.getElementById('inTtd4Phone').value;
         document.getElementById('outTtd5').value = document.getElementById('inTtd5').value;
 
-        const stamp = document.getElementById('outApproveStamp'); const checkStamp = document.getElementById('inApproveStamp');
-        if (stamp && checkStamp) stamp.style.display = checkStamp.checked ? 'block' : 'none';
-        const stampAtasan = document.getElementById('outApproveAtasanStamp'); const checkStampAtasan = document.getElementById('inApproveAtasan');
-        if (stampAtasan && checkStampAtasan) stampAtasan.style.display = checkStampAtasan.checked ? 'block' : 'none';
+        const stamp = document.getElementById('outApproveStamp');
+        const checkStamp = document.getElementById('inApproveStamp');
+        if (stamp && checkStamp) { stamp.style.display = checkStamp.checked ? 'block' : 'none'; }
+
+        const stampAtasan = document.getElementById('outApproveAtasanStamp');
+        const checkStampAtasan = document.getElementById('inApproveAtasan');
+        if (stampAtasan && checkStampAtasan) { stampAtasan.style.display = checkStampAtasan.checked ? 'block' : 'none'; }
 
         const noSurat = document.getElementById('inNoSurat').value || 'BSS';
         try { JsBarcode("#barcode", noSurat, { width: 1.2, height: 30, displayValue: true, fontSize: 9, margin: 0 }); } catch(e) {}
 
         const mode = document.getElementById('docMode').value;
         const table = document.getElementById('previewTable');
-        
+        const outLabelTtd2 = document.getElementById('outLabelTtd2');
+        const outLabelTtd3 = document.getElementById('outLabelTtd3');
+        const outLabelTtd4 = document.getElementById('outLabelTtd4');
+
         if (mode === 'comex') {
+            table.classList.add('comex-mode');
             document.getElementById('docTitleLabel').innerText = "SURAT JALAN COMEX";
+            if(outLabelTtd2) outLabelTtd2.innerText = "Diketahui oleh,";
+            if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa oleh,";
+            if(outLabelTtd4) outLabelTtd4.innerText = "Dibawa oleh,";
         } else if (mode === 'budget') {
+            table.classList.remove('comex-mode');
             document.getElementById('docTitleLabel').innerText = "SERAH TERIMA BUDGET";
+            if(outLabelTtd2) outLabelTtd2.innerText = "Diambil Oleh,";
+            if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa Oleh,";
+            if(outLabelTtd4) outLabelTtd4.innerText = "Diketahui Oleh,";
         } else {
+            table.classList.remove('comex-mode');
             document.getElementById('docTitleLabel').innerText = "SURAT JALAN KELUAR";
+            if(outLabelTtd2) outLabelTtd2.innerText = "Diketahui oleh,";
+            if(outLabelTtd3) outLabelTtd3.innerText = "Diperiksa oleh,";
+            if(outLabelTtd4) outLabelTtd4.innerText = "Dibawa oleh,";
         }
 
-        const outTbody = document.getElementById('outTbody'); outTbody.innerHTML = '';
+        const outTbody = document.getElementById('outTbody');
+        outTbody.innerHTML = '';
         document.querySelectorAll('#inputTbody tr').forEach((row, index) => {
             const i = row.querySelectorAll('input');
-            if(i.length >= 11 && i[0].value.trim() !== '') {
+            if(i.length >= 11) {
                 outTbody.innerHTML += `<tr>
                     <td class="col-num">${index + 1}</td>
                     <td class="col-std">${i[0].value || ''}</td>
@@ -829,7 +880,7 @@
                     <td class="col-std">${i[2].value || ''}</td>
                     <td class="col-comex">${i[3].value || ''}</td>
                     <td class="col-comex">${i[4].value || ''}</td>
-                    <td class="col-std" style="font-weight:bold;">${i[5].value || ''}</td>
+                    <td class="col-std">${i[5].value || ''}</td>
                     <td class="col-std">${i[6].value || ''}</td>
                     <td class="col-std">${i[7].value || ''}</td>
                     <td class="col-comex">${i[8].value || ''}</td>
@@ -842,10 +893,12 @@
         const lampiranBox = document.getElementById('previewLampiran');
         const lampiranImgContainer = document.getElementById('lampiranImages');
         lampiranImgContainer.innerHTML = '';
+        
         if(docsPhotos.length > 0) {
             lampiranBox.classList.remove('hidden');
             docsPhotos.forEach(src => {
-                const img = document.createElement('img'); img.src = src; img.className = "lampiran-img";
+                const img = document.createElement('img');
+                img.src = src; img.className = "lampiran-img";
                 lampiranImgContainer.appendChild(img);
             });
         } else {
@@ -856,239 +909,135 @@
     function printDoc() { window.print(); }
 
     function downloadPDF() {
-        const element = document.getElementById('pdfArea'); element.style.boxShadow = 'none';
-        const inputs = element.querySelectorAll('input'); const backupValues = [];
+        const element = document.getElementById('pdfArea');
+        element.style.boxShadow = 'none';
+
+        const inputs = element.querySelectorAll('input');
+        const backupValues = [];
 
         inputs.forEach(input => {
             backupValues.push({ el: input, val: input.value, parent: input.parentNode });
-            const span = document.createElement('div'); span.innerText = input.value || '';
+            const span = document.createElement('div');
+            span.innerText = input.value || '';
             span.style.cssText = input.style.cssText + "; font-size:" + window.getComputedStyle(input).fontSize + "; font-weight:bold; text-align:center; min-height:14px; margin-top:2px;";
             input.replaceWith(span);
         });
 
         html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
-            backupValues.forEach(item => { const tempDiv = item.parent.querySelector('div'); if(tempDiv) tempDiv.replaceWith(item.el); });
+            backupValues.forEach(item => {
+                const tempDiv = item.parent.querySelector('div');
+                if(tempDiv) { tempDiv.replaceWith(item.el); }
+            });
+
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            
             const orientation = document.getElementById('pageOrientation').value;
             const pdfOrientation = orientation === 'landscape' ? 'l' : 'p';
             
             const pdf = new jspdf.jsPDF(pdfOrientation, 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth(); const pageHeight = pdf.internal.pageSize.getHeight();
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
             const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-            let heightLeft = imgHeight; let position = 0;
+            
+            let heightLeft = imgHeight;
+            let position = 0;
 
-            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight); heightLeft -= pageHeight;
+            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+            heightLeft -= pageHeight;
+
             while (heightLeft > 5) {
-                position = heightLeft - imgHeight; pdf.addPage();
-                pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight); heightLeft -= pageHeight;
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+                heightLeft -= pageHeight;
             }
-            pdf.save(`Surat_Jalan_${document.getElementById('inNoSurat').value.replace(/\//g, '-') || 'BSS'}.pdf`);
+            
+            const fileNo = document.getElementById('inNoSurat').value.replace(/\//g, '-') || 'BSS';
+            pdf.save(`Surat_Jalan_${fileNo}.pdf`);
             element.style.boxShadow = '';
         }).catch(err => {
-            backupValues.forEach(item => { const tempDiv = item.parent.querySelector('div'); if(tempDiv) tempDiv.replaceWith(item.el); });
-            element.style.boxShadow = ''; showAlert("Error PDF", "Gagal mengonversi ke PDF: " + err);
+            backupValues.forEach(item => {
+                const tempDiv = item.parent.querySelector('div');
+                if(tempDiv) { tempDiv.replaceWith(item.el); }
+            });
+            element.style.boxShadow = '';
+            showAlert("Error PDF", "Gagal mengonversi ke PDF: " + err);
         });
     }
 
     function saveToDriveAndSheet() {
         const btn = document.getElementById('btnSaveData');
-        btn.innerText = "⏳ Sedang Mengirim ke Server Google..."; btn.disabled = true;
+        btn.innerText = "⏳ Menyimpan data..."; btn.disabled = true;
 
-        let materialsData = []; let rawMaterials = []; 
+        let materialsData = [];
         document.querySelectorAll('#inputTbody tr').forEach(row => {
             const i = row.querySelectorAll('input');
-            if(i.length >= 11 && i[0].value.trim() !== '') {
+            if(i.length > 5 && i[0].value.trim() !== '') {
                 materialsData.push(`${i[0].value} | ${i[1].value} | Qty:${i[5].value}`);
-                rawMaterials.push({
-                    mat: i[0].value, desc: i[1].value, part: i[2].value, sn: i[3].value, eks: i[4].value, 
-                    qty: i[5].value, uom: i[6].value, batch: i[7].value, wo: i[8].value, mo: i[9].value, rem: i[10].value
-                });
             }
         });
 
         const noSurat = document.getElementById('inNoSurat').value;
-        const currentDocData = {
-            mode: document.getElementById('docMode').value,
-            orientation: document.getElementById('pageOrientation').value,
-            tanggal: document.getElementById('inTanggal').value, noSurat: noSurat,
-            noSTO: document.getElementById('inNoSTO').value, noGI: document.getElementById('inNoGI').value, 
-            dari: document.getElementById('inDari').value, ke: document.getElementById('inKe').value, 
-            costCenter: document.getElementById('inCostCenter') ? document.getElementById('inCostCenter').value : '',
-            materials: rawMaterials,
-            ttd1: document.getElementById('inTtd1').value, ttd2: document.getElementById('inTtd2').value, 
-            ttd3: document.getElementById('inTtd3').value, ttd4: document.getElementById('inTtd4').value, 
-            ttd4Phone: document.getElementById('inTtd4Phone').value, ttd5: document.getElementById('inTtd5').value,
-            appStamp: document.getElementById('inApproveStamp').checked,
-            appAtasan: document.getElementById('inApproveAtasan').checked,
-            photos: [...docsPhotos],
-            saveTime: new Date().toLocaleString('id-ID')
-        };
+        const tanggal = document.getElementById('inTanggal').value;
+        
+        let costCenter = "";
+        if(document.getElementById('inCostCenter')) {
+            costCenter = document.getElementById('inCostCenter').value;
+        }
 
-        const payloadJSONString = JSON.stringify(currentDocData);
-
+        // Penggunaan Fetch sederhana tanpa mengubah Content-Type
+        // Ini menghindari mekanisme blokir Preflight OPTIONS dari Browser ke Google
         fetch(scriptURL, {
             method: 'POST',
             body: JSON.stringify({
                 action: 'save_data', 
-                tanggal: currentDocData.tanggal, noSurat: currentDocData.noSurat,
-                noSTO: currentDocData.noSTO, noGI: currentDocData.noGI, 
-                dari: currentDocData.dari, ke: currentDocData.ke, 
-                costCenter: currentDocData.costCenter,
+                tanggal: tanggal, 
+                noSurat: noSurat,
+                noSTO: document.getElementById('inNoSTO').value, 
+                noGI: document.getElementById('inNoGI').value, 
+                dari: document.getElementById('inDari').value,
+                ke: document.getElementById('inKe').value, 
+                costCenter: costCenter,
                 materials: materialsData.join("\n"),
-                ttd1: currentDocData.ttd1, ttd2: currentDocData.ttd2, ttd3: currentDocData.ttd3, 
-                ttd4: currentDocData.ttd4 + ' (' + currentDocData.ttd4Phone + ')', ttd5: currentDocData.ttd5,
-                images: docsPhotos,
-                rawJson: payloadJSONString // Data lengkap disimpan ke Cloud agar bisa di-print ulang
+                ttd1: document.getElementById('inTtd1').value, 
+                ttd2: document.getElementById('inTtd2').value, 
+                ttd3: document.getElementById('inTtd3').value, 
+                ttd4: document.getElementById('inTtd4').value + ' (' + document.getElementById('inTtd4Phone').value + ')', 
+                ttd5: document.getElementById('inTtd5').value,
+                images: docsPhotos
             })
         })
         .then(res => res.json())
         .then(resData => {
             if(resData.status === 'success') {
-                const d = new Date(currentDocData.tanggal); const pad = (n) => n.toString().padStart(2, '0');
+                const d = new Date(tanggal);
+                const pad = (n) => n.toString().padStart(2, '0');
                 const dateStr = `${pad(d.getDate())}${pad(d.getMonth()+1)}${d.getFullYear().toString().slice(-2)}`;
-                let storedSeq = JSON.parse(localStorage.getItem('bss_surat_seq'));
-                let currentSeq = (storedSeq && storedSeq.date === dateStr) ? storedSeq.seq : 1;
-                localStorage.setItem('bss_surat_seq', JSON.stringify({ date: dateStr, seq: currentSeq + 1 }));
-
-                syncNoSurat(); 
-                showAlert("Sukses", "Data berhasil diamankan ke Database Sheets!");
-                fetchLogsFromSheet(); // Otomatis refresh log dari Cloud
-            } else {
-                showAlert("Gagal", "Terdapat error pada server Sheets: " + resData.message);
-            }
-            btn.innerText = "💾 SIMPAN & SINKRONISASI KE GOOGLE SHEETS"; btn.disabled = false;
-        }).catch(err => {
-            showAlert("Koneksi Bermasalah", "Gagal menyimpan. Pastikan internet stabil dan Web App URL benar ter-Deploy.\nError: " + err); 
-            btn.innerText = "💾 SIMPAN & SINKRONISASI KE GOOGLE SHEETS"; btn.disabled = false;
-        });
-    }
-
-    function fetchLogsFromSheet() {
-        const tbody = document.getElementById('historyTbody');
-        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-blue-600 font-bold text-lg animate-pulse">⏳ Sedang mensinkronisasikan data dengan Google Sheets...</td></tr>`;
-
-        fetch(scriptURL + "?action=get_logs", { method: 'GET' })
-        .then(res => res.json())
-        .then(resData => {
-            if(resData.status === 'success') {
-                syncedLogs = resData.data; // Simpan di global var
-                localStorage.setItem('bss_surat_history', JSON.stringify(syncedLogs)); // Backup lokal
-                renderHistoryLog();
-            } else {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-red-600 font-bold">Gagal mengambil data: ${resData.message}</td></tr>`;
-            }
-        })
-        .catch(err => {
-            // Jika koneksi internet mati/bermasalah, ambil dari backup lokal browser
-            syncedLogs = JSON.parse(localStorage.getItem('bss_surat_history') || '[]');
-            renderHistoryLog();
-            showAlert("Mode Offline", "Koneksi ke server gagal, menampilkan data riwayat yang tersimpan di perangkat lokal Anda.");
-        });
-    }
-
-    function renderHistoryLog(filterKeyword = "") {
-        const tbody = document.getElementById('historyTbody');
-        tbody.innerHTML = '';
-        
-        const filtered = syncedLogs.filter(doc => {
-            const query = filterKeyword.toLowerCase();
-            return (doc.noSurat && doc.noSurat.toLowerCase().includes(query)) ||
-                   (doc.ke && doc.ke.toLowerCase().includes(query)) ||
-                   (doc.mode && doc.mode.toLowerCase().includes(query));
-        });
-
-        if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-gray-500 italic">Tidak ada riwayat dokumen yang ditemukan.</td></tr>`;
-            return;
-        }
-
-        filtered.forEach((doc) => {
-            const tr = document.createElement('tr');
-            tr.className = "border-b hover:bg-blue-50 transition";
-            tr.innerHTML = `
-                <td class="p-3 border font-semibold text-gray-600">${doc.saveTime || '-'}</td>
-                <td class="p-3 border font-bold text-blue-800">${doc.noSurat}</td>
-                <td class="p-3 border uppercase text-xs font-bold text-gray-700 bg-gray-50">${doc.mode}</td>
-                <td class="p-3 border font-semibold">${doc.ke}</td>
-                <td class="p-3 border text-center flex justify-center gap-2">
-                    <button onclick="reprintHistory('${doc.noSurat}')" class="bg-indigo-600 text-white px-3 py-1.5 rounded shadow hover:bg-indigo-700 font-bold text-xs transition transform hover:scale-105">
-                        🖨️ Muat & Cetak
-                    </button>
-                    <button onclick="confirmDeleteLog('${doc.noSurat}')" class="bg-red-500 text-white px-3 py-1.5 rounded shadow hover:bg-red-600 font-bold text-xs transition transform hover:scale-105" title="Hapus Permanen dari Cloud">
-                        🗑️ Hapus
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function filterHistoryLog() { renderHistoryLog(document.getElementById('searchLogInput').value); }
-
-    function confirmDeleteLog(noSurat) {
-        showAlert("Konfirmasi Hapus Cloud", `PERINGATAN: Apakah Anda yakin ingin menghapus surat ${noSurat} secara PERMANEN dari Database Spreadsheet?`, () => {
-            document.getElementById('historyTbody').innerHTML = `<tr><td colspan="5" class="p-4 text-center font-bold text-red-500">⏳ Sedang menghapus dari Cloud...</td></tr>`;
-            
-            fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'delete_log', noSurat: noSurat })
-            }).then(res => res.json()).then(resData => {
-                if(resData.status === 'success') {
-                    showAlert("Berhasil", "Data telah resmi dihapus dari Google Sheets.");
-                    fetchLogsFromSheet(); // Reload dari cloud
-                } else {
-                    showAlert("Gagal", resData.message);
-                    fetchLogsFromSheet(); // Reload
+                
+                let storedData = JSON.parse(localStorage.getItem('bss_surat_seq'));
+                let currentSeq = 1;
+                if (storedData && storedData.date === dateStr) {
+                    currentSeq = storedData.seq;
                 }
-            }).catch(err => {
-                showAlert("Error", "Gagal terhubung ke server: " + err);
-                fetchLogsFromSheet();
-            });
+                
+                let nextSeq = currentSeq + 1;
+                localStorage.setItem('bss_surat_seq', JSON.stringify({ date: dateStr, seq: nextSeq }));
+                
+                syncNoSurat(); 
+                showAlert("Sukses", "Data berhasil disimpan di Google Sheets!"); 
+            } else {
+                showAlert("Error dari Server", "Gagal menyimpan: " + resData.message);
+            }
+            btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
+        }).catch(err => {
+            showAlert("Kesalahan Koneksi", "Gagal menyimpan. Pastikan Script URL sudah di-Deploy Ulang (New Version).\n\nDetail: " + err); 
+            btn.innerText = "💾 SIMPAN DATA KE DATABASE (SHEETS)"; btn.disabled = false;
         });
-    }
-
-    function reprintHistory(noSurat) {
-        const data = syncedLogs.find(h => h.noSurat === noSurat);
-        if(!data) return;
-
-        if (data._isLegacy) {
-            showAlert("Peringatan Data Lama", "Dokumen ini dibuat sebelum fitur penyimpanan Cloud Utuh diaktifkan. Detail material tidak bisa dimuat secara lengkap.");
-            return;
-        }
-
-        document.getElementById('docMode').value = data.mode;
-        document.getElementById('pageOrientation').value = data.orientation || 'portrait';
-        toggleComexMode();
-
-        document.getElementById('inTanggal').value = data.tanggal; document.getElementById('inNoSurat').value = data.noSurat;
-        document.getElementById('inNoSTO').value = data.noSTO || ''; document.getElementById('inNoGI').value = data.noGI || '';
-        document.getElementById('inDari').value = data.dari || 'BSS';
-        
-        document.getElementById('inKe').value = data.ke || '';
-        if (data.mode === 'budget') updateCostCenter(); 
-
-        document.getElementById('inTtd1').value = data.ttd1 || ''; document.getElementById('inTtd2').value = data.ttd2 || '';
-        document.getElementById('inTtd3').value = data.ttd3 || ''; document.getElementById('inTtd4').value = data.ttd4 || '';
-        document.getElementById('inTtd4Phone').value = data.ttd4Phone || ''; document.getElementById('inTtd5').value = data.ttd5 || '';
-        document.getElementById('inApproveStamp').checked = data.appStamp || false;
-        if(document.getElementById('inApproveAtasan')) document.getElementById('inApproveAtasan').checked = data.appAtasan || false;
-
-        const tbody = document.getElementById('inputTbody'); tbody.innerHTML = '';
-        if (data.materials && data.materials.length > 0) {
-            data.materials.forEach(m => {
-                addRow(); const i = tbody.lastElementChild.querySelectorAll('input');
-                i[0].value = m.mat; i[1].value = m.desc; i[2].value = m.part; i[3].value = m.sn; i[4].value = m.eks;
-                i[5].value = m.qty; i[6].value = m.uom; i[7].value = m.batch; i[8].value = m.wo; i[9].value = m.mo; i[10].value = m.rem;
-            });
-        } else { addRow(); }
-
-        docsPhotos = data.photos || []; renderDocsPreview();
-        switchTab('preview');
-        showAlert("Data Termuat", `Data untuk nomor surat ${data.noSurat} berhasil ditarik penuh dari Cloud dan siap dicetak ulang!`);
     }
 
     function handleValFileSelect(event) {
-        const file = event.target.files[0]; if (!file) return;
+        const file = event.target.files[0];
+        if (!file) return;
         document.getElementById('valSelectedFileName').innerText = file.name;
         validasiMimeType = file.type;
         const reader = new FileReader();
@@ -1097,9 +1046,9 @@
     }
 
     function uploadValidasiToDrive() {
-        if (!validasiFileBase64) return showAlert("Peringatan", "Pilih foto dokumen dari galeri atau kamera dulu!");
+        if (!validasiFileBase64) return showAlert("Peringatan", "Pilih foto dokumen dulu!");
         const btn = document.getElementById('btnUploadVal');
-        btn.innerText = "⏳ Sedang Mengupload ke Drive..."; btn.disabled = true;
+        btn.innerText = "⏳ Sedang Mengupload..."; btn.disabled = true;
 
         fetch(scriptURL, {
             method: 'POST',
@@ -1110,8 +1059,7 @@
             } else showAlert("Error", "Gagal upload: " + resData.message);
             btn.innerText = "🚀 UPLOAD KE GOOGLE DRIVE"; btn.disabled = false;
         }).catch(err => {
-            showAlert("Kesalahan Koneksi", "Gagal menghubungi server. Pastikan URL Script benar.\n" + err); 
-            btn.innerText = "🚀 UPLOAD KE GOOGLE DRIVE"; btn.disabled = false;
+            showAlert("Kesalahan", "Gagal menghubungi server. Pastikan URL Script benar.\n" + err); btn.innerText = "🚀 UPLOAD KE GOOGLE DRIVE"; btn.disabled = false;
         });
     }
 
@@ -1120,14 +1068,16 @@
         const tgl = formatDate(document.getElementById('inTanggal').value) || "-"; const noSurat = document.getElementById('inNoSurat').value || "-";
         const fileUrl = document.getElementById('uploadedValidasiUrl').value;
 
-        let text = `*Informasi Pengiriman Barang (BSS Logistik)*\nNo Surat: ${noSurat}\nDikirim Dari: ${dari}\nDikirim Ke: ${ke}\nTanggal: ${tgl}\n\n`;
-        text += fileUrl ? `*Link Dokumen Terlampir:*\n${fileUrl}\n` : `_(Dokumen belum diunggah)_\n`;
+        let text = `*Informasi Pengiriman Barang – Surat Jalan*\nNo Surat: ${noSurat}\nDikirim Dari: ${dari}\nDikirim Ke: ${ke}\nTanggal: ${tgl}\n\n`;
+        text += fileUrl ? `*Link Dokumen Validasi:*\n${fileUrl}\n` : `_(Dokumen validasi belum diunggah ke Drive)_\n`;
         
         if (/Android|webOS|iPhone|iPad/i.test(navigator.userAgent) && validasiFileBase64) {
             const b = atob(validasiFileBase64); const ab = new Uint8Array(b.length);
             for (let i = 0; i < b.length; i++) ab[i] = b.charCodeAt(i);
-            const file = new File([new Blob([ab], {type: validasiMimeType})], "Val_" + noSurat.replace(/\//g, "-") + (validasiMimeType.includes('pdf')?'.pdf':'.jpg'), { type: validasiMimeType });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) return navigator.share({ title: 'Dokumen', text: text, files: [file] }).catch(e=>console.log(e));
+            const file = new File([new Blob([ab], {type: validasiMimeType})], "Validasi_" + noSurat.replace(/\//g, "-") + (validasiMimeType.includes('pdf')?'.pdf':'.jpg'), { type: validasiMimeType });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                return navigator.share({ title: 'Dokumen', text: text, files: [file] }).catch(e=>console.log(e));
+            }
         }
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     }
