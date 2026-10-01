@@ -63,16 +63,16 @@
 
         /* Mode Budget CSS (Formasi 4 TTD) */
         .sig-budget-mode td { width: 25% !important; }
-        .sig-budget-mode .sig-col-5 { display: none !important; }
+        .sig-budget-mode .sig-col-5, .sig-budget-mode .sig-col-pm { display: none !important; }
 
         /* Kotak Lampiran Foto */
         .lampiran-box { border: 2px solid #000; border-top: none; padding: 8px; text-align: center; page-break-inside: avoid; }
         .lampiran-title { font-weight: bold; font-size: 11px; margin-bottom: 6px; text-decoration: underline; }
         .lampiran-img { width: 23%; height: 150px; object-fit: contain; margin: 3px; border: 1px solid #ccc; display: inline-block; background: #fff; }
 
-        /* Tabel Tanda Tangan Tingkat Lanjut (Sejajar Sempurna) */
+        /* Tabel Tanda Tangan Tingkat Lanjut (Sejajar Sempurna - 6 Kolom) */
         .signature-table { width: 100%; border-collapse: collapse; margin-top: 15px; page-break-inside: avoid; text-align: center; font-size: 10px; }
-        .signature-table td { width: 20%; border: 1px solid #000; padding: 4px; vertical-align: top; }
+        .signature-table td { width: 16.66%; border: 1px solid #000; padding: 4px; vertical-align: top; }
         .sig-title-row td { font-weight: normal; padding-top: 5px; }
         .sig-space-row td { height: 75px; border-bottom: none; position: relative; } 
         .sig-name-row td { border-top: none; padding-bottom: 2px; }
@@ -197,7 +197,7 @@
 
     <div class="bg-white rounded-lg shadow-md p-6 mb-6 border-l-4 border-indigo-500">
         <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Informasi Penandatangan (Signers)</h2>
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="signer-grid">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4" id="signer-grid">
             <div>
                 <label class="block text-sm font-semibold mb-1">Dibuat oleh</label>
                 <input type="text" id="inTtd1" value="User Pengirim" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
@@ -217,6 +217,14 @@
             <div>
                 <label id="label-ttd3" class="block text-sm font-semibold mb-1">Diperiksa oleh</label>
                 <input type="text" id="inTtd3" value="Security" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
+            </div>
+            <div id="signer-pm-container">
+                <label id="label-ttdPM" class="block text-sm font-semibold mb-1">Disetujui oleh</label>
+                <input type="text" id="inTtdPM" value="Project Manager" class="w-full p-2 border rounded focus:ring-blue-500 text-center">
+                <label class="inline-flex items-center mt-2 cursor-pointer" id="wrap-approve-pm">
+                    <input type="checkbox" id="inApprovePM" class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300">
+                    <span class="ml-2 text-xs font-bold text-blue-600">+ Cap APPROVED (PM)</span>
+                </label>
             </div>
             <div>
                 <label id="label-ttd4" class="block text-sm font-semibold mb-1">Dibawa oleh</label>
@@ -365,6 +373,7 @@
                     <td>Dibuat oleh,</td>
                     <td id="outLabelTtd2">Diketahui oleh,</td>
                     <td id="outLabelTtd3">Diperiksa oleh,</td>
+                    <td class="sig-col-pm" id="outLabelTtdPM">Disetujui oleh,</td>
                     <td id="outLabelTtd4">Dibawa oleh,</td>
                     <td class="sig-col-5">Diterima oleh,</td>
                 </tr>
@@ -375,17 +384,22 @@
                     <td>
                         <div id="outApproveAtasanStamp" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%) rotate(-15deg); border: 2px solid #16a34a; color: #16a34a; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 14px; letter-spacing: 2px; opacity: 0.8; z-index: 10;">APPROVED</div>
                     </td>
-                    <td></td><td></td><td class="sig-col-5"></td>
+                    <td></td>
+                    <td class="sig-col-pm">
+                        <div id="outApprovePMStamp" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%) rotate(-15deg); border: 2px solid #2563eb; color: #2563eb; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 14px; letter-spacing: 2px; opacity: 0.8; z-index: 10;">APPROVED</div>
+                    </td>
+                    <td></td><td class="sig-col-5"></td>
                 </tr>
                 <tr class="sig-name-row">
                     <td><div class="signature-line"></div><input type="text" id="outTtd1" class="sig-input" readonly></td>
                     <td><div class="signature-line"></div><input type="text" id="outTtd2" class="sig-input" readonly></td>
                     <td><div class="signature-line"></div><input type="text" id="outTtd3" class="sig-input" readonly></td>
+                    <td class="sig-col-pm"><div class="signature-line"></div><input type="text" id="outTtdPM" class="sig-input" readonly></td>
                     <td><div class="signature-line"></div><input type="text" id="outTtd4" class="sig-input" readonly></td>
                     <td class="sig-col-5"><div class="signature-line"></div><input type="text" id="outTtd5" class="sig-input" readonly></td>
                 </tr>
                 <tr class="sig-phone-row">
-                    <td></td><td></td><td></td>
+                    <td></td><td></td><td></td><td class="sig-col-pm"></td>
                     <td><input type="text" id="outTtd4Phone" class="sig-input-phone" readonly></td>
                     <td class="sig-col-5"></td>
                 </tr>
@@ -443,10 +457,10 @@
 </div>
 
 <script>
-    // Endpoint Google Apps Script Aktif
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwHOODhQD0401zh1-0y3g1_8KB_L0Uk3vXC2uDseYNoudzn3asrr5plrK41b1bD-vQK/exec';
+    // PASTI KAN URL INI ADALAH HASIL DARI "NEW DEPLOYMENT" DI GOOGLE APPS SCRIPT
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbymqrxnOcZWJKti01za1Z9FOLCPPPJg4hdp6nibpJunxAmDHrtClfOCMT5oPL1MPy_Z/exec';
     
-    let docsPhotos = [];
+    let docsPhotos = []; 
     let validasiFileBase64 = "";
     let validasiMimeType = "";
     
@@ -551,6 +565,7 @@
         const sigTable = document.getElementById('previewSignatureTable');
         const signerGrid = document.getElementById('signer-grid');
         const sigCol5Inputs = document.getElementById('signer5-container');
+        const signerPmContainer = document.getElementById('signer-pm-container');
         
         const ttd2Label = document.getElementById('label-ttd2');
         const ttd3Label = document.getElementById('label-ttd3');
@@ -584,9 +599,9 @@
             sigTable.classList.remove('sig-budget-mode');
             document.getElementById('pageOrientation').value = 'landscape';
             
-            signerGrid.classList.remove('md:grid-cols-4');
-            signerGrid.classList.add('md:grid-cols-5');
+            signerGrid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4';
             sigCol5Inputs.style.display = 'block';
+            if (signerPmContainer) signerPmContainer.style.display = 'block';
             
             inThDesc.innerText = "Material Description"; outThDesc.innerText = "Material description";
             inThPart.innerText = "Mfr Part Number"; outThPart.innerText = "Mfr Part Number";
@@ -616,9 +631,9 @@
             sigTable.classList.add('sig-budget-mode');
             document.getElementById('pageOrientation').value = 'portrait';
             
-            signerGrid.classList.remove('md:grid-cols-5');
-            signerGrid.classList.add('md:grid-cols-4');
+            signerGrid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4';
             sigCol5Inputs.style.display = 'none';
+            if (signerPmContainer) signerPmContainer.style.display = 'none';
             
             inThDesc.innerText = "PR Short Text"; outThDesc.innerText = "PR Short Text";
             inThPart.innerText = "MPN"; outThPart.innerText = "MPN";
@@ -635,7 +650,7 @@
             document.getElementById('inTtd4').value = "Staff Logistik";
             
             if (wrapApproveAtasan && containerTtd4) containerTtd4.appendChild(wrapApproveAtasan);
-            if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[3].appendChild(outApproveAtasanStamp);
+            if (outApproveAtasanStamp && sigSpaceRow) sigSpaceRow.children[4].appendChild(outApproveAtasanStamp);
             
             wrapCostCenter.classList.remove('hidden');
             rowOutCostCenter.style.display = 'table-row';
@@ -667,9 +682,9 @@
             sigTable.classList.remove('sig-budget-mode');
             document.getElementById('pageOrientation').value = 'portrait';
             
-            signerGrid.classList.remove('md:grid-cols-4');
-            signerGrid.classList.add('md:grid-cols-5');
+            signerGrid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4';
             sigCol5Inputs.style.display = 'block';
+            if (signerPmContainer) signerPmContainer.style.display = 'block';
             
             inThDesc.innerText = "Material Description"; outThDesc.innerText = "Material description";
             inThPart.innerText = "Mfr Part Number"; outThPart.innerText = "Mfr Part Number";
@@ -826,6 +841,9 @@
 
         document.getElementById('outTtd1').value = document.getElementById('inTtd1').value;
         document.getElementById('outTtd2').value = document.getElementById('inTtd2').value;
+        if (document.getElementById('outTtdPM') && document.getElementById('inTtdPM')) {
+            document.getElementById('outTtdPM').value = document.getElementById('inTtdPM').value;
+        }
         document.getElementById('outTtd3').value = document.getElementById('inTtd3').value;
         document.getElementById('outTtd4').value = document.getElementById('inTtd4').value;
         document.getElementById('outTtd4Phone').value = document.getElementById('inTtd4Phone').value;
@@ -838,6 +856,10 @@
         const stampAtasan = document.getElementById('outApproveAtasanStamp');
         const checkStampAtasan = document.getElementById('inApproveAtasan');
         if (stampAtasan && checkStampAtasan) { stampAtasan.style.display = checkStampAtasan.checked ? 'block' : 'none'; }
+
+        const stampPM = document.getElementById('outApprovePMStamp');
+        const checkStampPM = document.getElementById('inApprovePM');
+        if (stampPM && checkStampPM) { stampPM.style.display = checkStampPM.checked ? 'block' : 'none'; }
 
         const noSurat = document.getElementById('inNoSurat').value || 'BSS';
         try { JsBarcode("#barcode", noSurat, { width: 1.2, height: 30, displayValue: true, fontSize: 9, margin: 0 }); } catch(e) {}
@@ -1001,6 +1023,7 @@
                 materials: materialsData.join("\n"),
                 ttd1: document.getElementById('inTtd1').value, 
                 ttd2: document.getElementById('inTtd2').value, 
+                ttdPM: document.getElementById('inTtdPM') ? document.getElementById('inTtdPM').value : '',
                 ttd3: document.getElementById('inTtd3').value, 
                 ttd4: document.getElementById('inTtd4').value + ' (' + document.getElementById('inTtd4Phone').value + ')', 
                 ttd5: document.getElementById('inTtd5').value,
